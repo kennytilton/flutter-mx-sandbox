@@ -1,9 +1,9 @@
-# Flutter/MX
+# Flutter/MX Sandbox
 
-Programming [Flutter](https://flutter.dev/?gclid=CjwKCAjwwdWVBhA4EiwAjcYJEEoxUuE14sd2MGLJW35qeuJynmTRjqpUL3SbIUhOiS4TihjyZ9iTVRoCJkoQAvD_BwE&gclsrc=aw.ds) with [ClojureDart](https://github.com/Tensegritics/ClojureDart) and [Matrix](https://github.com/kennytilton/matrix), a generic, fine-grained, transparent, reactive state manager.
+Examples of Flutter/MX, including ports of `samples` from the ClojureDart repo.
 
 ## Documentation
-Please see our [WIP Wiki](https://github.com/kennytilton/flutter-mx/wiki), or just ping @kennytilton on the #clojurians or #fluttercommunity Slacks and we can pair to get you rolling.
+Please see our [WIP Wiki](https://github.com/kennytilton/flutter-mx-sandbox/wiki), or just ping @kennytilton on the #clojurians or #fluttercommunity Slacks and we can pair to get you rolling.
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ If you just want to run the thing...
 First, complete the [ClojureDart "Flutter Quick Start"](https://github.com/Tensegritics/ClojureDart/blob/main/doc/flutter-quick-start.md). Help with that can be had in the #ClojureDart channel on the #Clojurians Slack. Or ping @kennyilton on that Slack or the Flutter Community Slack.
 
 #### 1. Clone this repo
-`git clone https://github.com/kennytilton/flutter-mx`
+`git clone https://github.com/kennytilton/flutter-mx-sandbox`
 
 #### 2. Start a simulator. (Our focus so far has been mobile.)
 
@@ -52,7 +52,7 @@ The code for our `hello-world` is [here](https://github.com/kennytilton/flutter-
 #### 4. Running other examples.
 
 To try a different example:
-1. Edit [main.cljd](https://github.com/kennytilton/flutter-mx/blob/d6cd6e14027ed8f00a42ca6cc2464e48142922d4/src/tiltontec/main.cljd#L43) and change the namespace `hello` in `(hello/make-app)` to one of the namespaces listed above in the NS requires. Try `xcounter` to see the standard Flutter Counter app, or `todo` to see the [TodoMVC classic](https://github.com/tastejs/todomvc/blob/master/app-spec.md).
+1. Edit `main.cljd` and change the namespace `hello` in `(hello/make-app)` to one of the namespaces listed above in the NS requires. Try `xcounter` to see the standard Flutter Counter app, or `todo` to see the TodoMVC classic.
 2. Save your changes.
 3. Now switch back to the "watch" terminal and wait a few seconds until you see that the app has been rebuilt.
 4. Now hit RETURN.
