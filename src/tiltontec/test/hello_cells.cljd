@@ -1,0 +1,199 @@
+(ns tiltontec.test.hello-cells
+  (:require
+    [tiltontec.util.base
+     :refer [trx dp prog1 *trx?* dp]]
+    [tiltontec.util.core :refer [ err]]
+    [tiltontec.cell.base
+     :refer [without-c-dependency
+             cells-init c-optimized-away? c-formula? c-value c-optimize
+             c-unbound? c-input?
+             c-model mdead? c-valid? c-useds c-ref? md-ref?
+             c-state +pulse+ c-pulse-observed
+             *call-stack* *defer-changes* unbound
+             c-rule c-me c-value-state c-callers caller-ensure
+             unlink-from-callers *causation*
+             c-slot-name c-synaptic? caller-drop
+             c-pulse c-pulse-last-changed c-ephemeral? c-slot c-slots
+             *depender* *not-to-be*
+             *c-prop-depth* md-slot-owning? c-lazy] :as cty]
+    [tiltontec.cell.integrity :refer [with-integrity]]
+    [tiltontec.cell.observer
+     :refer [ fn-obs]]
+    [tiltontec.cell.core
+     :refer [cF cF+ c-reset-next! cFonce cFn cI c-reset! make-cell make-c-formula]]
+    [tiltontec.cell.evaluate :refer [c-get c-awaken]]))
+
+(defn hw-01 []
+  (let [v ;;"visitor"
+        {:name "World"
+         :action (make-cell :value "knocks"
+                   :input? true)}]
+
+    (dp :hw01 v)
+
+    (dp :name (c-get (:name v)))
+
+    (dp :name-act (c-get (:name v))
+      (c-get (:action v)))
+
+
+
+    (assert (=  (c-get (:name v)) "World"))
+    (assert (=  (c-get (:action v)) "knocks"))))
+
+(defn hw-02 []
+  (let [obs-action (atom nil)
+        v ;;"visitor"
+        {:name "World"
+         :action (cI nil
+                   :slot :v-action
+                   :watch ;; short for observer
+                   (fn [slot me new old c]
+                     (reset! obs-action new)
+                     (dp :observing slot new old)))}]
+    (assert (=  (c-get (:name v)) "World"))
+    (c-reset! (:action v) "knocks")
+    (assert (=  (c-get (:action v)) "knocks"))
+    (assert (= "knocks" @obs-action))))
+
+(defn hw-03 []
+  (let [action (atom nil)
+        obs-action (fn [slot me new old c]
+                     (reset! action new)
+                     (dp :observing slot new old))
+        v {:name "World"
+           :action (cI nil :slot :v-action
+                     :watch obs-action)}]
+
+    (assert (nil? (c-get (:action v))))
+    (assert (nil? @action))
+
+    (c-reset! (:action v) "knock-knock")
+    (assert (= "knock-knock" @action))
+    (assert (= (c-get (:action v)) "knock-knock"))))
+
+(defn gobs [slot me new old c]
+  (dp :gobs> slot new old))
+
+(defn hw-04 []
+  (let [r-action (cI nil
+                   :slot :r-action
+                   :watch gobs)
+        r-loc (make-c-formula
+                :slot :r-loc
+                :watch gobs
+                :rule (fn [c]
+                        (case (c-get r-action)
+                          :leave :away
+                          :return :at-home
+                          :missing)))]
+    (c-awaken r-loc)
+    (assert (= :missing (:value @r-loc)))
+    (dp :---about-to-leave------------------)
+    (c-reset! r-action :leave)
+    (dp :---left------------------)
+    (assert (= :away (c-get r-loc)))))
+
+(defn hw-05 []
+  (dp :--go------------------)
+  (let [obs-action (fn [slot me new old c]
+                     (dp slot new old))
+        v {:name "World"
+           :action (cI nil :slot :v-action
+                     :watch obs-action)}
+        r-action (cI nil)
+        r-loc (cF+ [:watch (fn-obs (when new (trx :honey-im new)))]
+                (case (c-get r-action)
+                  :leave :away
+                  :return :home
+                  :missing))
+        r-response (cF+ [:watch (fn-obs (trx :r-resp new))]
+                     (when (= :home (c-get r-loc))
+                       (when-let [act (c-get (:action v))]
+                         (case act
+                           :knock-knock "hello, world"))))]
+    (assert (nil? (c-get r-response)))
+    (c-reset! (:action v) :knock-knock)
+    (c-reset! r-action :return)
+    (assert (= :home (c-get r-loc)))))
+
+(defn hello-world []
+  (dp :--go------------------)
+  (let [obs-action (fn [slot me new old c]
+                     (dp slot new old))
+        v {:name "World"
+           :action (cI nil
+                     :slot :v-action
+                     :ephemeral? true
+                     :watch obs-action)}
+        r-action (cI nil)
+        r-loc (cF+ [:watch (fn-obs (when new (trx :honey-im new)))]
+                (case (c-get r-action)
+                  :leave :away
+                  :return :home
+                  :missing))
+        r-response (cF+ [:watch (fn-obs (trx :r-response new))
+                         :ephemeral? true]
+                     (when (= :home (c-get r-loc))
+                       (when-let [act (c-get (:action v))]
+                         (case act
+                           :knock-knock "hello, world"))))]
+    (assert (nil? (c-get r-response)))
+    (c-reset! (:action v) :knock-knock)
+    (c-reset! r-action :return)
+    (assert (= :home (c-get r-loc)))
+    (c-reset! (:action v) :knock-knock)))
+
+(defn hello-world-2 []
+  (dp :--go------------------)
+  (let [obs-action (fn [slot me new old c]
+                     (when new (trx visitor-did new)))
+        v {:name "World"
+           :action (cI nil
+                     :slot :v-action
+                     :ephemeral? true
+                     :watch obs-action)}
+        r-action (cI nil)
+        r-loc (cF+ [:watch (fn-obs (when new (trx :honey-im new)))]
+                (case (c-get r-action)
+                  :leave :away
+                  :return :home
+                  :missing))
+        r-response (cF+ [:watch (fn-obs (when new
+                                        (trx :r-response new)))
+                         :ephemeral? true
+                         ]
+                     (when (= :home (c-get r-loc))
+                       (when-let [act (c-get (:action v))]
+                         (case act
+                           :knock-knock "hello, world"))))
+        alarm (cF+ [:watch (fn-obs
+                           (trx :telling-alarm-api new))]
+                (if (= :home (c-get r-loc)) :off :on))
+        alarm-do (cF+ [:watch (fn-obs
+                              (case new
+                                :call-police (trx :auto-dialing-911)
+                                nil))]
+                   (when (= :on (c-get alarm))
+                     (when-let [action (c-get (:action v))]
+                       (case action
+                         :smashing-window :call-police
+                         nil))))]
+    (map c-awaken [alarm-do r-response r-loc (:action v)])
+    (assert (= :missing (:value @r-loc)))
+    (c-reset! (:action v) :knock-knock)
+    (c-reset! (:action v) :smashing-window)
+    (c-reset! r-action :return)
+    (assert (= :home (c-get r-loc)))
+    (c-reset! (:action v) :knock-knock)
+    ))
+
+(defn run-tests []
+  (hw-01)
+  (hw-02)
+  (hw-03)
+  (hw-04)
+  (hw-05)
+  (hello-world)
+  (dp :hello-cells-OK))
+

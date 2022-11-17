@@ -1,0 +1,129 @@
+(ns tiltontec.util.base
+  (:require [clojure.string :as str]))
+
+(defn trc [x]
+  (dart:core/print (str "trx> " x)))
+
+;; --- easy access to maps in refs, BYPASSING mget (use def-mx-slots for that) ----
+
+(defmacro def-rmap-slots [reader-prefix & slots]
+  `(do
+     ~@(map (fn [slot#]
+              `(defn ~(symbol (str (or reader-prefix "")
+                                slot#))
+                 [~'ref]
+                 (~(keyword slot#) @~'ref))) slots)))
+
+(defmacro def-rmap-meta-slots [reader-prefix & slots]
+  `(do
+     ~@(map (fn [slot#]
+              `(defn ~(symbol (str (or reader-prefix "")
+                                slot#))
+                 [~'ref]
+                 (~(keyword slot#) (meta ~'ref)))) slots)))
+
+(defn type-cljd [x]
+  (if-let [m (meta x)]
+    (or (:mx-type m)
+      (throw (AssertionError. (str "type-clj passed object with meta without type property: " x)))
+    (throw (AssertionError. (str "type-clj passed object without meta: " x))))))
+
+;; ---- debug print statement hacks ---------------------
+
+(def ^:dynamic *trx?* true)
+
+#_
+    (alter-var-root #'*trx?* not)
+
+(def ^:dynamic *trc-ensure* nil)
+(def ^:dynamic *trx-path-id* nil)
+(def ^:dynamic *trdeep* 0)
+(def ^:dynamic *txran* 0)
+(def last-trc (atom 0)) ;; s/b universal time
+
+(defn call-trc$ [s bits]
+  (str s ": " (str/join ", " bits)))
+
+
+(defn call-trc [s & os]
+  ;; (break) ;; uncomment to escape loop
+  (when *trx?*
+    (when s
+      (let [path (apply str (repeat *trdeep* "."))]
+        (dp path (call-trc$ s os))))))
+
+(defmacro trx [label & vals]
+  `(call-trc ~(when (not (nil? label))
+                (str label))
+     ~@vals))
+
+;(defn call-wtrx [fn lo hi trxargs]
+;  (binding [*trdeep* (inc *trdeep*)]
+;    (cond
+;      (<= lo *trdeep* hi)
+;      (apply call-trc trxargs)
+;      (> *trdeep* hi)
+;      (throw (Exception.
+;               (str "wtrx exceeded max depth " hi ":"
+;                 (apply call-trc$ (first trxargs)
+;                   (rest trxargs))))))
+;    (fn)))
+;
+;(defmacro wtrx [[lo hi & trxargs] & body]
+;  `(call-wtrx (fn [] ~@body) ~lo ~hi (list ~@trxargs)))
+
+;;;----------------------------------------
+
+(defn dp [& bits]
+  (when-not false ;; (nil? (first bits))
+    (dart:core/print (str/join " - " (list* :DPR
+                                       *trdeep*
+                                       (apply str (repeat *trdeep* "."))
+                                       (map #(if (nil? %) :NIL %) bits))))))
+
+(defmacro dpx [& bits]
+  `(do))
+
+(defn dprn [& bits]
+  (when-not (nil? (first bits))
+    (dart:core/print (str/join " - " (list* :DPR
+                                       *trdeep*
+                                       (apply str (repeat *trdeep* "."))
+                                       bits)))))
+(defn dprnx [& bits])
+
+(defn call-wtrx [fn lo hi trxargs]
+  (let [orig-depth *trdeep*
+        new-depth (+ 1 orig-depth)
+        new-ran (rand-int 999)]
+    (binding [*trdeep* new-depth
+              *txran* new-ran]
+      #_ (dprn :WTRX (first trxargs)
+        (if (= *trdeep* new-depth) :ok :BADDEPTH!!!!) [:orig orig-depth] [:new new-depth]
+        [:bound *trdeep*] [:rans (if (= *txran* new-ran) :ok :RAND_BAD_TOO!!!!!!!!!!!!!!!)] :info (rest trxargs))
+
+      (assert (= *txran* new-ran))
+      (assert (= *trdeep* new-depth)) ;; bindingfail #1 happens on slot name :zq3 but not :zq, starting value at unbound (the symbol)
+
+      (cond
+        (<= lo *trdeep* hi)
+        (apply call-trc trxargs)
+        (> *trdeep* hi)
+        (throw (Exception.
+                 (str "wtrx exceeded max depth " hi ":"
+                   (apply call-trc$ (first trxargs)
+                     (rest trxargs))))))
+      (fn))))
+
+(defmacro wtrx [[lo hi & trxargs] & body]
+  `(call-wtrx (fn [] ~@body) ~lo ~hi (list ~@trxargs)))
+
+(defmacro prog1 [& body]
+  `(let [result# ~(first body)]
+     ~@(rest body)
+     result#))
+
+(defmacro prog1 [& body]
+  `(let [result# ~(first body)]
+     ~@(rest body)
+     result#))

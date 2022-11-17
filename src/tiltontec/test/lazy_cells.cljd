@@ -1,0 +1,168 @@
+(ns tiltontec.test.lazy-cells
+  (:require
+    [tiltontec.util.base
+     :refer [trx dp prog1]]
+    [tiltontec.cell.base
+     :refer [without-c-dependency c-optimized-away? c-formula? c-value c-optimize
+             c-unbound? c-input?  cells-init
+             c-model mdead? c-valid? c-useds c-ref? md-ref?
+             c-state +pulse+ c-pulse-observed
+             *call-stack* *defer-changes* unbound
+             c-rule c-me c-value-state c-callers caller-ensure
+             unlink-from-callers *causation*
+             c-slot-name c-synaptic? caller-drop
+             c-pulse c-pulse-last-changed c-ephemeral? c-slot
+             *depender* *not-to-be*
+             *c-prop-depth* md-slot-owning? c-lazy] :as cty]
+    [tiltontec.cell.integrity :refer [with-integrity]]
+    [tiltontec.cell.evaluate :refer [c-get]]
+    [tiltontec.cell.observer
+     :refer [ fn-obs]]
+    [tiltontec.cell.core
+     :refer [cF cF+ c_F cF_ cI c-reset! c-fn make-c-formula]]))
+
+
+(defn solid-lazy []
+  (cells-init)
+  (let [xo (atom 0)
+        a (cI 0)
+        runs (atom 0)
+       #_#_  x (cF_ [:watch (fn-obs (swap! xo inc))]
+            (swap! runs inc)
+            (dp :x-ran-runs-now @runs)
+            (+ (c-get a) 40))
+        x (make-c-formula
+            :watch (fn-obs ;;(dp :watch-incing-xo!!!!!!!!!)
+                   (swap! xo inc))
+            :value tiltontec.cell.base/unbound
+            :lazy :until-asked
+            :rule (c-fn (swap! runs inc)
+                    ;; (dp :x-ran-runs-now @runs)
+                    (+ (c-get a) 40)))]
+    (assert (= unbound (:value @x)))
+    (assert (= 0 @xo))
+    (assert (= 0 @runs))
+    (assert (= 40 (c-get x)))
+    (assert (= 1 @runs))
+    (assert (= 1 @xo))
+    (assert (= 40 (c-get x)))
+    (assert (= 1 @runs) (str "solid test runs not 1, instead: " @runs))
+    (assert (= 1 @xo))
+    (c-reset! a 100)
+    (assert (= 2 @xo))
+    (assert (= 140 (:value @x)))
+    (assert (= 140 (c-get x)))
+    (assert (= 2 @xo))
+    ))
+
+
+
+(defn lazy-until-asked []
+  (cells-init)
+  (let [xo (atom 0)
+        xr (atom 0)
+        a (cI 0)
+        x (c_F [:watch (fn-obs (swap! xo inc))]
+            (swap! xr inc)
+            (+ (c-get a) 40))]
+    (assert (= unbound (:value @x)))
+    (assert (= 0 @xo))
+    (assert (= 0 @xr))
+    (assert (= 40 (c-get x)))
+    (assert (= 1 @xo))
+    (assert (= 1 @xr))
+    (c-reset! a 100)
+    (assert (= 2 @xo))
+    (assert (= 2 @xr))
+    (assert (= 140 (:value @x)))
+    (assert (= 140 (c-get x)))
+    (assert (= 2 @xo))
+    (assert (= 2 @xr))
+    ))
+
+(defn optimize-when-value-t []
+  (cells-init)
+  (let [xo (atom 0)
+        xr (atom 0)
+        a (cI 0 :slot :aaa)
+        x (cF+ [:slot :xxx
+                :watch (fn-obs (swap! xo inc))
+                :optimize :when-value-t]
+            (swap! xr inc)
+            (trx nil :reading-a!!!)
+            (when-let [av (c-get a)]
+              (when (> av 1)
+                (+ av 40))))]
+    (assert (nil? (c-get x)))
+    (assert (= #{a} (c-useds x)))
+    (c-reset! a 1)
+    (trx nil :reset-finished!!!!!!!!!!)
+    (assert (nil? (c-get x)))
+    (assert (= #{a} (c-useds x)))
+    (trx nil :reset-2-beginning!!!!!!!!!!!!)
+    (c-reset! a 2)
+    (trx nil :reset-2-finished!!!!!!!!!!)
+    (assert (= 42 (c-get x)))
+    (assert (empty? (c-useds x)))
+    (trx nil :useds (c-useds x))
+    (assert (empty? (c-callers x)))
+    ))
+
+(defn always-call []
+  (dp :test-always-start)
+  (cells-init)
+  (let [xo (atom 0)
+        ctx (atom nil)
+        a (cI 0)
+        runs (atom 0)
+        #_#_  x (cF_ [:watch (fn-obs (swap! xo inc))]
+                  (swap! runs inc)
+                  (dp :x-ran-runs-now @runs)
+                  (+ (c-get a) 40))
+        x (make-c-formula
+            :slot :xxx
+            :watch (fn-obs ;;(dp :watch-incing-xo!!! new old)
+                   (swap! xo inc))
+            :value tiltontec.cell.base/unbound
+            ;; todo make sure not optimized away
+            :always-compute true
+            :rule (c-fn
+                    (swap! runs inc)
+                    (when @ctx
+                      ;;(dp :x-ran-runs-now @runs)
+                      (+ (c-get a) 40))))]
+    (assert (= unbound (:value @x)))
+    (assert (= 0 @xo))
+    (assert (= 0 @runs))
+    (assert (nil? (c-get x)))
+    (assert (= 1 @runs))
+    (assert (= 1 @xo))
+    (reset! ctx true)
+
+    (assert (= 40 (c-get x)))
+    (assert (= 2 @runs) (str "runs not 2, instead " @runs))
+
+    (assert (= 2 @xo) (str "a xo is not 2 it is " @xo))
+
+    (assert (= 40 (c-get x)))
+    (assert (= 3 @runs))
+    (assert (= 2 @xo) (str "always a xo is not 2 it is " @xo))
+    (c-reset! a 100)
+    (assert (= 3 @xo) (str "always b xo is not 3 it is " @xo))
+    (assert (= 4 @runs) (str "always runs is not 3 it is " @runs))
+    (assert (= 140 (:value @x)) (str "always internal x is not 140 it is " (:value @x)))
+    (assert (= 140 (c-get x)))
+    (assert (= 5 @runs))
+    (assert (= 3 @xo))
+    (dp :test-always-ok)
+    ))
+
+(defn run-tests []
+  (always-call)
+  (dp :always-call-OK)
+  (solid-lazy)
+  (dp :solid-lazy-OK)
+  (lazy-until-asked)
+  (dp :lazy-until-asked-OK)
+  (optimize-when-value-t)
+  (dp :lazy-cells-OK))
