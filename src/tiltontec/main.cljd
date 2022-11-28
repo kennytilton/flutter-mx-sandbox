@@ -25,7 +25,7 @@
     [tiltontec.example.x13-snackbar :as snack]
     [tiltontec.example.x14-hero :as hero]
     [tiltontec.example.x15-fade-widget :as fade]
-    [tiltontec.example.x020-reactive-stream :as stream]
+    [tiltontec.example.x020-reactive-stream :as rxjs]
     [tiltontec.example.layout-explorer :as layo]
     [tiltontec.demo.todoMVC.core :as todo]))
 
@@ -35,8 +35,8 @@
 
   (m/runApp
     (fx/fx-render nil
-      ;; Change the ns/ vvv and rebuild to see a different example.
-      (hello/make-app)))
+      ;; Change the namespace below and rebuild to see a different example.
+      (rxjs/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
