@@ -52,9 +52,8 @@
           (fx/text!
             {:style (fx/in-my-context [me ctx]
                       (.-headline3 (.-textTheme (m.Theme/of ctx))))}
-            {:msg-source   (cF+ [;; todo support either :obs or :watch for observers
-                                 ;; todo new Stream Cell type, or :stream? option a la :sync?
-                                 :watch (fn [_ me ^#/(async/StreamController String) new-source old-source _]
+            {:msg-source   (cF+ [;; todo new Stream Cell type, or :stream? option a la :sync?
+                                 :obs (fn [_ me ^#/(async/StreamController String) new-source old-source _]
                                           ;; todo when old-source, unlisten it
                                           (.listen (.-stream ^#/(async/StreamController String) new-source)
                                             (fn [^String msg]
