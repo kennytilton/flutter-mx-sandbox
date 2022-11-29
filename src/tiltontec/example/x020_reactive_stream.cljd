@@ -57,13 +57,16 @@
             "Message received:")
           (fx/text!
             {:style (fx/in-my-context [me ctx]
-                      ;; access to the Flutter context is limited. Macro `in-my-context` tries
-                      ;; to make it less of a headache to work off the context.
+                      ;; access to the Flutter context is limited. Macro `in-my-context` handles
+                      ;; the complexity of accessing the context.
                       (.-headline3 (.-textTheme (m.Theme/of ctx))))}
 
+            ;; next we are able to provide a generic text proxy instance with a custom attribute.
+            ;; The win here is that we avoid the OO trap of having forever to subclass instances to extend
+            ;; their capabilities to achieve desired app behavior.
             {:msg-source
-             ;; Here we connect the stream mechanism to MX dataflow. Dart streams do not know about MX, of course,
-             ;; so we write a bit of "glue" code to feed stream content into the MX DAG where dependent MX properties
+             ;; Here we connect the Dart stream mechanism to MX dataflow. Dart streams do not know about MX, of course,
+             ;; so we must write a bit of "glue" code to feed stream content into the MX DAG where dependent MX properties
              ;; can "react".
              (cF+ [;; todo new Stream Cell type, or :stream? option a la :sync?
                    ;; This to-do ^^^ is about the possibility of extending f/mx to package up this glue
@@ -72,17 +75,21 @@
                             ;; todo when old-source, unlisten it
                             (.listen (.-stream ^#/(async/StreamController String) new-source)
                               (fn [^String msg]
-                                (with-integrity [:change :msg-rcvd]
-                                  (mset! me :message-rcvd msg)))))]
+                                (mset! me :message-rcvd msg))))]
                ;; This Cell works like an OO constructor, or Clojure defcomponent. It will not
-               ;; use/depend on other Cells, but as a formula it will run at the right time during widget
-               ;; initialization necessary to discover the message sender and its stream asset.
+               ;; use other Cells, hence have no dependencies, but we still make it a formula
+               ;; so it will run at the right time during widget initialization, namely after the
+               ;; widget has been connected to the larger Matrix where it can find the message sender (:msg-sender)
+               ;; and its stream asset. Without dependencies, it will not run again. Again, we effectively
+               ;; have an OO-style constructor, able to custom initialize an instance at instance creation time.
+               ;;
+               ;; FM* is just one of a bunch of macros that offer terser access to FGET, short for "family get".
                (mget (fm* :msg-sender) :msg-stream))
 
              :message-rcvd
              ;; this value will come from outside MX dataflow, specifically a Dart stream,
              ;; so we make it an "input" Cell, "input" from the perspective of the Matrix.
-             (cI "<none>")}
+             (cI "<none yet>")}
 
             ;; next we follow the HTML syntax and always list "children", even where
             ;; the "child" is just the content of a Flutter Text, the constructor parameter.
