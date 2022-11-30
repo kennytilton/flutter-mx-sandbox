@@ -17,5 +17,6 @@
          }
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         :sha "d9b33d4ad7f55fe3442781e30d5016dcd74cda0f"
+         ;:sha "d9b33d4ad7f55fe3442781e30d5016dcd74cda0f"
+         :sha "4251b846e84bd40469b48cabf1810e877fb5f7d4"
          }}}
