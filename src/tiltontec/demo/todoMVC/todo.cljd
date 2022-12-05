@@ -24,7 +24,9 @@
 
 ;;; --- FX-level to-dos and to-do list -----------------------------------------
 
-(declare ToDo-update)
+(defn ToDo-update [td]
+  (let [coll-name (mname (mpar td))]
+    (stg/td-rewrite coll-name (select-keys @td [:stg-id :created-at :title :completed]))))
 
 (deftype ToDo []
   :extends cty/Model
@@ -65,9 +67,7 @@
        :title (cI title)
        :completed (cI completed)))))
 
-(defn ToDo-update [td]
-  (let [coll-name (mname (mpar td))]
-    (stg/td-rewrite coll-name (select-keys @td [:stg-id :created-at :title :completed]))))
+
 
 ;;; --- higher level ---------------------------
 

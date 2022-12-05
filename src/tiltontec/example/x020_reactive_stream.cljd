@@ -31,14 +31,16 @@
                  {:title (m/Text "Reactive Streams Demo")})
        :floatingActionButton
        (cF (fx/floating-action-button
-             {:onPressed (as-dart-callback []
+             { ;; flutter attributes, reactive where useful
+              :onPressed (as-dart-callback []
                            ;; as-dart-callback jumps thru the technical hoops needed
                            ;; to get this code to run when the user presses this widget.
                            (mswap! me :offset #(if % (inc %) 0)))
-              :tooltip   "Send next word of message, looping at end"}
-             {
+              :tooltip   "Send next word of message, looping at end"
+              }
+             {;; custom attributes, reactive as needed
               :name       :msg-sender
-              :offset     (cI nil)
+              :offset     (cI nil) ;; cI for "input cell"
               ;; tl;dr: the rest of our implementation will fire off a word as soon as :offset is valid, so we start at
               ;; a null value and let the user kick things off.
               ;;
@@ -53,7 +55,9 @@
               ;; Moral: new MX developers need to design in terms of declarative, automatic state flow.
               ;; The good news is that this is easy to pick up, fun, and results are reliable and easily extended.
               ;;
-              :next-word  (cF+ [:ephemeral? true
+              :next-word  (cF+ ;; cF+ for "formlaic cell plus options
+                            ;; the options....
+                            [:ephemeral? true
                                 ;; tl;dr Have MX treat this property more like an event stream, so consecutive
                                 ;; duplicate values ("Turning Turning...") are not ignored (the usual dataflow optimization).
                                 ;;
@@ -85,6 +89,8 @@
                                            ;; state being watched.
                                            (.add (.-sink ^#/(async/StreamController String) (mget me :msg-stream))
                                              new-word)))]
+
+                            ;; the formula, with "me" akin to JS "this" or SmallTalk "self"...
                             (when-let [offset (mget me :offset)]
                               ;; Aside: there would be no harm in repeating the form (mget me :offset).
                               ;; The code just seems a whisker cleaner using when-let to avoid the repetition.
@@ -142,7 +148,6 @@
                                           ;; Super. But, now we need to do some wiring to connect the non-MX stream to the MX DAG.
                                           ;; 1. listen to the stream and...
                                           ;; 2. ...provide a listener which writes to an "input" Cell in the DAG.
-                                          ;; todo check if we need integrity isolation
                                           (.listen (.-stream ^#/(async/StreamController String) new-source)
                                             (fn [^String msg]
                                               (mset! me :msg-rcvd msg))))]
@@ -173,4 +178,11 @@
             ;; Next we follow the HTML pattern in which everything is a child, even where
             ;; the "child" will be the content of a Flutter Text, in pure Flutter provided as
             ;; the first parameter to the Text constructor.
-            (mget me :msg-rcvd)))))))
+            (mget me :msg-rcvd))
+
+          (fx/text {:style (p/TextStyle .color m.Colors/blue
+                             .fontSize 18.0)}
+            {:full-text (cF (conj
+                              (if (= _cache cty/unbound) [] _cache)
+                              (mget (fmu :msg-recipient) :msg-rcvd)))}
+            (str/join " " (remove #{"<none>"} (mget me :full-text)))))))))

@@ -4,19 +4,19 @@
  :aliases {:cljd {:main-opts ["-m" "cljd.build"]}}
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/data.json {:mvn/version "2.4.0"}
-        ;tensegritics/clojuredart
-        ;{:git/url "https://github.com/Tensegritics/ClojureDart.git"
-        ; ;; "git@github.com:tensegritics/ClojureDart.git"
-        ; :sha "47d4b3b18fcdafb7bfc65acf354b9125f791e0e3"
-        ; }
-        ; replace next entry with ^^^ to get back to just reload on save
-        ; or to get current with CLJD if you need to bump the commit SHA
-        kennytilton/ClojureDart
-        {:git/url "https://github.com/kennytilton/ClojureDart.git"
-         :sha "62a721de27e5fe2bbb004ed357441cbe31683182"
+        tensegritics/clojuredart
+        {:git/url "https://github.com/Tensegritics/ClojureDart.git"
+         :sha "7607686b7700f57b78d857f6bef23d7e17935be9" ;; beta hot reload
          }
+        ; hot restart instead of just reload:
+        ;kennytilton/ClojureDart
+        ;{:git/url "https://github.com/kennytilton/ClojureDart.git"
+        ; :sha "62a721de27e5fe2bbb004ed357441cbe31683182"
+        ; }
+
+        ;; this next pulls in standard CLJD, not beta reload
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         ;:sha "d9b33d4ad7f55fe3442781e30d5016dcd74cda0f"
-         :sha "4251b846e84bd40469b48cabf1810e877fb5f7d4"
-         }}}
+         :sha "436b2d4588c4ec6eb9052b714c3c932938b36099"
+         }
+        }}
