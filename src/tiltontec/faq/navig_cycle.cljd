@@ -20,6 +20,12 @@
                " Mere anarchy is loosed upon the world.") #" "))
 
 (defn make-app-fail []
+  ;;
+  ;; NB! THIS VERSION FAILS ON LAUNCH!!!!!!!!!!!!!!
+  ;;
+  ;; This version fails because the various FMU ("search family up") calls lead to criss-crossing,
+  ;; nested evaluation of implicit KIDS formulae, and we get MX_COMPUTE_CYCLE_DETECTED.
+  ;;
   (fx/material-app
     {:title "Flutter/MX Stream Demo"
      :theme (m/ThemeData .primarySwatch m.Colors/blue)}
@@ -34,13 +40,12 @@
               :tooltip   "Send next word of message, looping at end"
               }
              {:name       :msg-sender
-              :offset     (cI nil)                          ;; cI for "input cell"
-              :next-word  (cF+                              ;; cF+ for "formlaic cell plus options
-                            [:ephemeral? true
-                             :watch (fn [_ me new-word _ _]
-                                      (when new-word
-                                        (.add (.-sink ^#/(async/StreamController String) (mget me :msg-stream))
-                                          new-word)))]
+              :offset     (cI nil)
+              :next-word  (cF+ [:ephemeral? true
+                                :watch (fn [_ me new-word _ _]
+                                         (when new-word
+                                           (.add (.-sink ^#/(async/StreamController String) (mget me :msg-stream))
+                                             new-word)))]
                             (when-let [offset (mget me :offset)]
                               (nth the-second-coming (mod offset (count the-second-coming)))))
               :msg-stream (new #/(async/StreamController String))
@@ -55,9 +60,9 @@
           (fx/text
             {:style (p/TextStyle .color m.Colors/blue .fontSize 18.0)}
             {:name      :poem
-             :full-text (cF (conj
+             :full-text (cF (concat
                               (if (= _cache cty/unbound) [] _cache)
-                              (mget (fmu :msg-recipient) :msg-rcvd)))}
+                              [(mget (fmu :msg-recipient) :msg-rcvd)]))}
             (str/join " " (remove #{"<none>"} (mget me :full-text))))
 
           (fx/text {:style (p/TextStyle .color m.Colors/black
@@ -82,6 +87,8 @@
                                            (= msg "<none>"))
                                  (if _cache (inc _cache) 1))))}
             (mget me :msg-rcvd)))))))
+
+;;; --- the fix -----------------------------------------------------------
 
 (defn make-app-fixed []
   (fx/material-app
@@ -114,14 +121,22 @@
           {:mainAxisAlignment m.MainAxisAlignment/center}
           {:name       :msg-recipient
            ;;
-           ;; the solution is to move the :msg-rcvd property for which the other formulae are looking
-           ;; up where a straight ascendant search can find it, following the non-dynamic parent chain.
-           ;; By contrast, the FGET utility runs around looking everywhere, or at least looking blindly a lot of
-           ;; places if constrained. This blind search more easily leads to a cycle, by looking places
-           ;; it need not look.But blind search is great: it means I can code without worrying about
-           ;; specifying where to find things.
+           ;; the solution is to move the :msg-rcvd property, for which several formulae look, up to where
+           ;; a straight ascendant search can find it, following the non-dynamic parent chain.
            ;;
-           ;; So me move :msg-rcvd and the MX name :msg-recipient higher.
+           ;; By contrast, the FM-NAVIG utility runs around the parent/kids tree looking everywhere,
+           ;; potentially kicking of KIDS formulae to JIT compute more of the matrix. This blind search
+           ;; more easily leads to a cycle, by looking places it need not look. But!
+           ;;
+           ;; Blind search is huge for the D/X: it means we can code without worrying about
+           ;; specifying where to find things. When the simple coding cycles, we do have to think
+           ;; about how we can guide the search. For one thing, FMU usually avoids a lot of trouble.
+           ;;
+           ;; NB! This example arose because we tried aping HTML in which the text content of what seems
+           ;; like a leaf P or LABEL is actually a child. But because those are so common, and because
+           ;; we so often like to customize those, this property->child treatment exponentially increased
+           ;; the risk of cycling. We have already experimented with losing the property->child thing, and
+           ;; will be making that change shortly. When we do that, the "fail" app will no longer fail.
            ;;
            :msg-source (cF+ [:watch (fn [_ me ^#/(async/StreamController String) new-source old-source _]
                                       (.listen (.-stream ^#/(async/StreamController String) new-source)
@@ -132,21 +147,17 @@
            :msg-ct     (cF (when-let [msg (mget me :msg-rcvd)]
                              (when-not (or (str/blank? msg)
                                          (= msg "<none>"))
-                               (if _cache (inc _cache) 1))))
-           }
+                               (if _cache (inc _cache) 1))))}
 
           (fx/text {:style (p/TextStyle .color m.Colors/blue .fontSize 18.0)}
             {:name      :poem
-             :full-text (cF (let [recip (fasc :msg-recipient)
-                                  msg (mget recip :msg-rcvd)]
-                              ;;(cty/dpc _cell :full-text)
+             :full-text (cF (let [msg (mget (fasc :msg-recipient) :msg-rcvd)]
                               (when (not= msg "<none>")
-                                (conj
-                                  (if (= _cache cty/unbound) [] _cache)
-                                  msg))))}
+                                (concat (if (= _cache cty/unbound) [] _cache)
+                                  [msg]))))}
             (if (seq (mget me :full-text))
-                (str/join " " (mget me :full-text))
-                "zilch"))
+              (str/join " " (mget me :full-text))
+              "nada"))
 
           (fx/text {:style (p/TextStyle .color m.Colors/black
                              .fontSize 36.0)}
