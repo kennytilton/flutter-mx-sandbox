@@ -39,9 +39,9 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      ;(faq-nav/make-app)
+      (hero/make-app)
       ;(faq-nav/make-app-fail) ;; these usually will not even launch; watch console closely for erros
-      (faq-nav/make-app-fixed)
+      ;(faq-nav/make-app-fixed)
       ))
 
   ;; ??? (w/debugDumpApp)

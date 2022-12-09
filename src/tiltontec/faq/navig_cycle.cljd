@@ -21,10 +21,13 @@
 
 (defn make-app-fail []
   ;;
-  ;; NB! THIS VERSION FAILS ON LAUNCH!!!!!!!!!!!!!!
+  ;; NB! THIS VERSION NO LONGER FAILS ON LAUNCH!!!!!!!!!!!!!!
   ;;
-  ;; This version fails because the various FMU ("search family up") calls lead to criss-crossing,
+  ;; This version failed before because the various FMU ("search family up") calls lead to criss-crossing,
   ;; nested evaluation of implicit KIDS formulae, and we get MX_COMPUTE_CYCLE_DETECTED.
+  ;;
+  ;; Now that widgets text and text! no longer have fake kids for their string content, there is mush
+  ;; less navigation going on.
   ;;
   (fx/material-app
     {:title "Flutter/MX Stream Demo"
