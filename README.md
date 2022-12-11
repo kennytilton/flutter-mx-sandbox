@@ -28,7 +28,7 @@ BEWARE! If you forget this step to open a simulator, the next command will run f
 #### 3. Run the sample app.
 
 In a terminal:
-* `cd flutter-mx`, or wherever you cloned it;
+* `cd flutter-mx-sandbox`, or wherever you cloned it;
 
 Next, we build the app and start a "watch" to rebuild when the source changes.
 
