@@ -31,6 +31,7 @@
     [tiltontec.demo.todoMVC.core :as todo]
     ;[tiltontec.faq.navig-cycle :as faq-nav] ;; use make-app-fail or make-app-fixed
     [tiltontec.example.x25-flutter-tex :as tek]
+    [tiltontec.example.x26-latex-sandbox :as teksand]
     ))
 
 (defn main []
@@ -40,7 +41,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (hello/make-app)
+      (teksand/make-app)
 
       ;(faq-nav/make-app-fail) ;; these usually will not even launch; watch console closely for erros
       ;(faq-nav/make-app-fixed)

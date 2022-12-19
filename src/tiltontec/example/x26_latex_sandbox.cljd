@@ -1,10 +1,12 @@
-(ns tiltontec.example.x25-flutter-tex
+(ns tiltontec.example.x26-latex-sandbox
   (:require
     [clojure.string :as str]
-    [tiltontec.cell.core :refer [cF]]
-    [tiltontec.model.core :refer [mget mset! mswap!] :as md]
+    [tiltontec.util.base :refer [dprn dp dpx]]
+    [tiltontec.cell.base :refer [cinfo minfo] :as cty]
+    [tiltontec.cell.core :refer [cF cF+ cI cFonce]]
+    [tiltontec.model.core :refer [mget mset! mswap! fmuval] :as md]
     [tiltontec.flutter-mx.core :as fx
-     :refer [scaffold app-bar text center column hero material-app]]
+     :refer [as-dart-callback scaffold app-bar text center column hero material-app]]
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/material.dart" :as m]
     ["package:flutter/painting.dart" :as p]
@@ -18,6 +20,9 @@
               ;; " and they are\n; "
               "$$x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}$$"))
 
+(def sum2 (str "When \\( 2 \\pm 2 \\)"))
+
+
 (defn make-app []
   (material-app
     {:title                      "Flutter TeX Demo"
@@ -30,6 +35,19 @@
       (center
         (column
           {:mainAxisAlignment m.MainAxisAlignment/spaceEvenly}
+          (fx/text-field
+            {:controller (cFonce (fx/standard-text-value-controller me))
+             :decoration (m/InputDecoration
+                           .labelText "Raw TeX"
+                           .helperText "Your LaTeX here!"
+                           .border (m/OutlineInputBorder))
+             :autofocus true
+             :onChanged (as-dart-callback [text]
+                          (md/mset! me :value text))}
+            {:name  :raw-tex
+             :value (cI sum2
+                      :watch (fn [slot me newv priorv c]
+                                     (dp (str "value Tek: " newv))))})
           (tk/TeXView
             .child (tk/TeXViewColumn
                      .children
@@ -43,7 +61,11 @@
                                              .contentColor m.Colors/white
                                              .textAlign tk.TeXViewTextAlign/center))
                                   ; styling via tk styling:
-                                  (tk/TeXViewDocument pythag
+                                  (tk/TeXViewDocument #_ sum2
+                                    (do (dp :seeking-raw-tex-from (cty/minfo me))
+                                        (let [raw (md/fm* :raw-tex)]
+                                          (assert raw)
+                                          (mget raw :value)))
                                     .style (tk/TeXViewStyle
                                              .padding (.all tk/TeXViewPadding 10)
                                              .fontStyle (tk/TeXViewFontStyle
@@ -52,14 +74,7 @@
                                                                 .-amber
                                                                 .-shade50)
                                              .contentColor m.Colors/black
-                                             .textAlign tk.TeXViewTextAlign/left))
-                                  ;; similar to preceding, via CSS....
-                                  (tk/TeXViewDocument pythag
-                                    .style (.fromCSS tk/TeXViewStyle
-                                             (str "padding:10px;"
-                                               "font-size:28px;"
-                                               "color:black;"
-                                               "background:beige")))]))])
+                                             .textAlign tk.TeXViewTextAlign/left))]))])
             .style (tk/TeXViewStyle
                      .elevation 10
                      .borderRadius (.all tk/TeXViewBorderRadius 10)

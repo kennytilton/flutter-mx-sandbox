@@ -19,6 +19,7 @@
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
          ;:sha "bd9e5833307196f1323883292a7370bd6aeac1ee"
          ;:sha "8c261bc6894a2d2934e5dc3331fa84c368a44327"
-         :sha "02ec71214eaab28614a9679560637830fa1c8b44"
+         ;:sha "02ec71214eaab28614a9679560637830fa1c8b44"
+         :sha "bd1097d37d7ec7f6975bc8a54ccc8cc3877b7418" ;; branch modelex
          }
         }}
