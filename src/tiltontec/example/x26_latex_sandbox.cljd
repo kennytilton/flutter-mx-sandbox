@@ -1,16 +1,17 @@
-(ns tiltontec.example.x26-latex-sandbox
+(ns tiltontec.example.x26-tex-sandbox
   (:require
     [clojure.string :as str]
     [tiltontec.util.base :refer [dprn dp dpx]]
-    [tiltontec.cell.base :refer [cinfo minfo] :as cty]
     [tiltontec.cell.core :refer [cF cF+ cI cFonce]]
     [tiltontec.model.core :refer [mget mset! mswap! fmuval] :as md]
+
     [tiltontec.flutter-mx.core :as fx
      :refer [as-dart-callback scaffold app-bar text center column hero material-app]]
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/material.dart" :as m]
     ["package:flutter/painting.dart" :as p]
-    ["package:flutter_tex/flutter_tex.dart" :as tk]))
+    ["package:flutter_tex/flutter_tex.dart" :as tk]
+    [tiltontec.cell.base :as cty]))
 
 ;; In this example we simply see pure Flutter widgets -- no f/mx, no cljd/widget -- included
 ;; in a larger f/mx setting. In the next example we will get fancier and do a LaTeX sandbox.
@@ -35,19 +36,26 @@
       (center
         (column
           {:mainAxisAlignment m.MainAxisAlignment/spaceEvenly}
+          {:name  :tex-pair
+           :value (cI pythag
+                    :watch (fn [slot me newv priorv c]
+                             (dp (str "value Tek: " newv))))}
           (fx/text-field
             {:controller (cFonce (fx/standard-text-value-controller me))
+             ;;:keyboardType m.TextInputType/multiline
+             :maxLines 10
+             :style (p/TextStyle
+                      .fontSize 24.0)
              :decoration (m/InputDecoration
                            .labelText "Raw TeX"
                            .helperText "Your LaTeX here!"
                            .border (m/OutlineInputBorder))
-             :autofocus true
-             :onChanged (as-dart-callback [text]
-                          (md/mset! me :value text))}
+             :autofocus  true
+             :onChanged  (as-dart-callback [text]
+                           (md/mset! (md/fmu :tex-pair) :value text))}
             {:name  :raw-tex
-             :value (cI sum2
-                      :watch (fn [slot me newv priorv c]
-                                     (dp (str "value Tek: " newv))))})
+             :value (cF (fmuval :tex-pair))})
+
           (tk/TeXView
             .child (tk/TeXViewColumn
                      .children
@@ -61,11 +69,9 @@
                                              .contentColor m.Colors/white
                                              .textAlign tk.TeXViewTextAlign/center))
                                   ; styling via tk styling:
-                                  (tk/TeXViewDocument #_ sum2
-                                    (do (dp :seeking-raw-tex-from (cty/minfo me))
-                                        (let [raw (md/fm* :raw-tex)]
-                                          (assert raw)
-                                          (mget raw :value)))
+                                  (tk/TeXViewDocument (let []
+                                                        ;; wow, this works. Just have to grok "me"
+                                                        (md/mget me :value))
                                     .style (tk/TeXViewStyle
                                              .padding (.all tk/TeXViewPadding 10)
                                              .fontStyle (tk/TeXViewFontStyle
