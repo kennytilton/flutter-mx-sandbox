@@ -21,6 +21,7 @@
          ;:sha "8c261bc6894a2d2934e5dc3331fa84c368a44327"
          ;:sha "02ec71214eaab28614a9679560637830fa1c8b44"
          ;:sha "bd1097d37d7ec7f6975bc8a54ccc8cc3877b7418" ;; branch modelex
-         :sha "a158ac60e0c1b374c66ae01c261436b6343e8361" ;; against beta hot reload
+         ;:sha "a158ac60e0c1b374c66ae01c261436b6343e8361" ;; against beta hot reload
+         :sha "2b28fc50a2168bb3ebab346bd5dd56fb21744f28" ;; fixed freeze
          }
         }}

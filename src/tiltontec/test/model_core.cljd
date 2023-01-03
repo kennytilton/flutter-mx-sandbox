@@ -20,7 +20,7 @@
 
     [tiltontec.cell.core
      :refer [cF cF+ c-reset-next! cFonce cFn
-             cI c-reset! make-cell make-c-formula]]
+             cI creset! make-cell make-c-formula]]
 
     [tiltontec.cell.evaluate :refer [c-get c-awaken]]
     [tiltontec.model.base :refer [md-cz md-cell]]
@@ -46,7 +46,7 @@
     (let [kc (md-cell u :kids)
           kon (md-cell u :kon)]
       ;;(dp :resetting-cell kon)
-      (c-reset! kon true)
+      (creset! kon true)
       (assert (= 1 (count (:kids @u))))
       (assert (md/fm-navig :konzo u :inside? true))
       )))
@@ -109,7 +109,7 @@
     (assert (= 42 (mdv! :aa :aa42 u)))
     (assert (= 21 (mdv! :bb :bb21 u)))
     (assert (nil? (fm-navig :konzo u :must? false)))
-    (c-reset! (md-cell u :kon) true)
+    (creset! (md-cell u :kon) true)
     (assert (:kon @u))
     (assert (md-cell u :kon))
     (assert (= 3 (count (:kids @u))))
@@ -137,7 +137,7 @@
     (assert (= 42 (mdv! :aa :aa42 u)))
     (assert (= 21 (mdv! :bb :bb21 u)))
     (assert (nil? (fm-navig :konzo u :must? false)))
-    (c-reset! (md-cell u :kon) true)
+    (creset! (md-cell u :kon) true)
     (assert (:kon @u))
     (assert (md-cell u :kon))
     (assert (= 3 (count (:kids @u))))

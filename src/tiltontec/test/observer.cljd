@@ -19,7 +19,7 @@
     [tiltontec.cell.observer :refer [fn-obs]]
 
     [tiltontec.cell.core
-     :refer [cF cF+ cI c-reset!]]
+     :refer [cF cF+ cI creset!]]
     ))
 
 (defn t-formula []
@@ -73,7 +73,7 @@
       (assert (= @bobs nil))
       (assert (= (c-get c) 20))
       (assert (= @cobs 20))
-      (c-reset! b 3)
+      (creset! b 3)
       (assert (= 3 @bobs))
       (assert (= 30 (c-get c)))
       (assert (= 30 @cobs)))))

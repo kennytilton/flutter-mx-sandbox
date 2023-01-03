@@ -23,7 +23,7 @@
              *depender* *not-to-be*
              *c-prop-depth* md-slot-owning? c-lazy] :as cty]
     [tiltontec.cell.core
-     :refer [make-cell cI cF cFn cFonce cF+ cF+n c-reset!]]
+     :refer [make-cell cI cF cFn cFonce cF+ cF+n creset!]]
     [tiltontec.cell.observer
      :refer [fn-obs]]
     [tiltontec.cell.integrity
@@ -167,7 +167,7 @@
     (assert (nil? (:value @b)))
 
     (do
-      (c-reset! b "Mom")
+      (creset! b "Mom")
       (assert (= "Hi Mom" (c-get c)))
       (assert (= 2 @boct))
       (assert (= 2 @crun @cobs))
@@ -175,7 +175,7 @@
       (assert (nil? (:value @b))))
 
     (do
-      (c-reset! b "Mom")
+      (creset! b "Mom")
       (assert (= "Hi Mom" (c-get c)))
       (assert (= 3 @boct))
       (assert (= 3 @crun))
@@ -194,7 +194,7 @@
         c (cF (+ 1 (c-get b)))]
     (assert (= 21 (c-get b)))
     (assert (= 22 (c-get c)))
-    (c-reset! b 42)
+    (creset! b 42)
     (assert (= 42 (c-get b)))
     (assert (= 43 (c-get c))))
   (dp :t-cFn-OK))
@@ -207,7 +207,7 @@
     (assert (= 21 (c-get b)))
 
     (do
-      (c-reset! a 2)
+      (creset! a 2)
       (assert (= 2 (c-get a)))
       (assert (= 21 (c-get b))))
     (dp :t-cfonce-ok)))
