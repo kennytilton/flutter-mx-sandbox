@@ -20,15 +20,6 @@
                " Mere anarchy is loosed upon the world.") #" "))
 
 (defn make-app-fail []
-  ;;
-  ;; NB! THIS VERSION NO LONGER FAILS ON LAUNCH!!!!!!!!!!!!!!
-  ;;
-  ;; This version failed before because the various FMU ("search family up") calls lead to criss-crossing,
-  ;; nested evaluation of implicit KIDS formulae, and we get MX_COMPUTE_CYCLE_DETECTED.
-  ;;
-  ;; Now that widgets text and text! no longer have fake kids for their string content, there is mush
-  ;; less navigation going on.
-  ;;
   (fx/material-app
     {:title "Flutter/MX Stream Demo"
      :theme (m/ThemeData .primarySwatch m.Colors/blue)}
@@ -90,8 +81,6 @@
                                            (= msg "<none>"))
                                  (if _cache (inc _cache) 1))))}
             (mget me :msg-rcvd)))))))
-
-;;; --- the fix -----------------------------------------------------------
 
 (defn make-app-fixed []
   (fx/material-app
