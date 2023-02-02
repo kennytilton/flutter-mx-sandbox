@@ -6,7 +6,6 @@
         org.clojure/data.json {:mvn/version "2.4.0"}
         tensegritics/clojuredart
         {:git/url "https://github.com/Tensegritics/ClojureDart.git"
-         ;;:sha "7607686b7700f57b78d857f6bef23d7e17935be9" ;; beta hot reload
          :sha "d23de986eea577b0e4edf11844edd64721a09ad8"
          }
         ; hot restart instead of just reload:
@@ -17,8 +16,5 @@
 
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         ;:sha "a158ac60e0c1b374c66ae01c261436b6343e8361" ;; against beta hot reload
-         ;:sha "2b28fc50a2168bb3ebab346bd5dd56fb21744f28" ;; fixed freeze
-         ;:sha "ce0ccfbac57ef47614358f913debdc425d496a28" ;; built against CLJD official reload
          :sha "d24973f1de616c8675e57b52c4ac9640442dc427"}
         }}

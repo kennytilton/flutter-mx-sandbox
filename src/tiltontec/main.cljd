@@ -39,7 +39,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (affine/make-app)
+      (counter/make-app)
       ))
 
   ;; ??? (w/debugDumpApp)

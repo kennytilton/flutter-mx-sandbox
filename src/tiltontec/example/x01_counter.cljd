@@ -28,7 +28,7 @@
           (fx/text {:style (p/TextStyle .color m.Colors/black
                              .fontSize 18.0)}
             "You clicked the button this many times:")
-          (fx/text!
+          (fx/text
             {:style (fx/in-my-context [me ctx]
                       (.-headline4 (.-textTheme (m.Theme/of ctx))))}
             {:name  :z-counter

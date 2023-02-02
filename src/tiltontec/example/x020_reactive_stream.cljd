@@ -127,7 +127,7 @@
             ;; That is a cycle. We avoid it by telling the utility to search only above this node.
             (str "Message " (or (mget (fmu :msg-recipient) :msg-ct) "not") " received:"))
 
-          (fx/text!
+          (fx/text
             {:style (fx/in-my-context [me ctx]
                       ;; access to the Flutter context is not straightforward.
                       ;; Macro `in-my-context` handles the complexity of accessing the context.
