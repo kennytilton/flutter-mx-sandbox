@@ -5,6 +5,8 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/data.json {:mvn/version "2.4.0"}
         tensegritics/clojuredart
+        {:git/url "https://github.com/tensegritics/ClojureDart.git", :sha "84b18f8e67556862f265ea41f3a9e5f9506cdbef"}
+        #_ ;; before renewing work
         {:git/url "https://github.com/Tensegritics/ClojureDart.git"
          :sha "d23de986eea577b0e4edf11844edd64721a09ad8"
          }
