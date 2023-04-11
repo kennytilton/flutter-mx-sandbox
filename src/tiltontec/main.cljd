@@ -14,7 +14,7 @@
     [tiltontec.example.x04-drawer :as drawer]
     [tiltontec.example.x05-fab :as fab]
     [tiltontec.example.x06-tabs :as tabs]
-    [tiltontec.example.x07-animated-container :as anicon]
+    ; broken by MX cleanup [tiltontec.example.x07-animated-container :as anicon]
     [tiltontec.example.x08-navigation :as nav]
     [tiltontec.example.x09-form-change :as formchg]
     [tiltontec.example.x09-form-input :as formi]
@@ -39,7 +39,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (affine/make-app)
+      (todo/make-app)
       ))
 
   ;; ??? (w/debugDumpApp)
