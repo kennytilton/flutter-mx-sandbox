@@ -5,19 +5,20 @@
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/data.json {:mvn/version "2.4.0"}
         tensegritics/clojuredart
-        {:git/url "https://github.com/tensegritics/ClojureDart.git", :sha "84b18f8e67556862f265ea41f3a9e5f9506cdbef"}
-        #_ ;; before renewing work
-        {:git/url "https://github.com/Tensegritics/ClojureDart.git"
-         :sha "d23de986eea577b0e4edf11844edd64721a09ad8"
+        {:git/url "https://github.com/tensegritics/ClojureDart.git"
+         ;:sha "84b18f8e67556862f265ea41f3a9e5f9506cdbef"
+         :sha "9a6ecd8f347a5d85836ca27d3c57b1cb05ded5a4" ; embedding
          }
-        ; hot restart instead of just reload:
-        ;kennytilton/ClojureDart
-        ;{:git/url "https://github.com/kennytilton/ClojureDart.git"
-        ; :sha "62a721de27e5fe2bbb004ed357441cbe31683182"
-        ; }
 
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         ;:sha "d24973f1de616c8675e57b52c4ac9640442dc427"
-         :sha "1b379e545b560f4c9d86ac633da7d35fe50856cb"}
+         ;; X07+ :sha "d24973f1de616c8675e57b52c4ac9640442dc427"
+         ;; X07+ :sha "7f28b8787aab66334bcd7b1ea4c6dc1c7581e394"
+         ;; X07- :sha "ba934744a8a4f5589e5c329db61ca99e2aeb5464"
+         ;; X07- :sha "6cda1313d7cbb75091f6307a66c548ea51324eb4"
+         ;; X07- :sha "638f6325917aae09aafb4da719256f6b7d9c6a60"
+         ;; :sha "1b379e545b560f4c9d86ac633da7d35fe50856cb"
+         ;:sha "e1e4b205ed1d29b3b4173f58ef570eba111adfa1" ;; embedding
+         :sha "f44ff809728b5c59cfb544b3c1f6b958224732ce" ;; UUID embedding
+         }
         }}

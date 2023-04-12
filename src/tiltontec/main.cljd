@@ -14,7 +14,7 @@
     [tiltontec.example.x04-drawer :as drawer]
     [tiltontec.example.x05-fab :as fab]
     [tiltontec.example.x06-tabs :as tabs]
-    ; broken by MX cleanup [tiltontec.example.x07-animated-container :as anicon]
+    ;;[tiltontec.example.x07-animated-container :as x07]
     [tiltontec.example.x08-navigation :as nav]
     [tiltontec.example.x09-form-change :as formchg]
     [tiltontec.example.x09-form-input :as formi]
@@ -26,7 +26,7 @@
     [tiltontec.example.x15-fade-widget :as fade]
     [tiltontec.example.x020-reactive-stream :as rxjs]
     [tiltontec.example.layout-explorer :as layo]
-    [tiltontec.demo.todoMVC.core :as todo]
+    ;;[tiltontec.demo.todoMVC.core :as todo]
     [tiltontec.faq.navig-cycle :as faq-nav] ;; use make-app-fail or make-app-fixed
     [tiltontec.example.x25-flutter-tex :as tek]
     [tiltontec.example.x26-latex-sandbox :as teksand]
@@ -39,8 +39,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (todo/make-app)
-      ))
+      (hello/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
