@@ -20,6 +20,7 @@
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
          ;:sha "d24973f1de616c8675e57b52c4ac9640442dc427"
          ;:sha "1b379e545b560f4c9d86ac633da7d35fe50856cb"
-         :sha "7e73c62f015845900807368349562319be0cdebf" ;; oldmx
+         ;; :sha "7e73c62f015845900807368349562319be0cdebf" ;; oldmx
+         :sha "9b5e6d56b06f4b1a9a5c29f387672392a95bf806" ;; ignore-pointer
          }
         }}
