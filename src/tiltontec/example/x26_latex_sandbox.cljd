@@ -59,6 +59,7 @@
                      .children
                      [(tk/TeXViewInkWell
                         .id "id_0"
+                        .onTap (fn [^String id] #_ (dp :tapped id))
                         .child (tk/TeXViewColumn
                                  .children
                                  [(tk/TeXViewDocument "<h2>MathPaper&trade;</h2>"
