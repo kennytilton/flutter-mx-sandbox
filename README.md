@@ -3,7 +3,7 @@
 Examples of Flutter/MX, including ports of `samples` from the ClojureDart repo.
 
 ## Documentation
-Please see our [WIP Wiki](https://github.com/kennytilton/flutter-mx-sandbox/wiki), or just ping @kennytilton on the #clojurians or #fluttercommunity Slacks and we can pair to get you rolling.
+Please see the [Flutter/MX Wiki](https://github.com/kennytilton/flutter-mx/wiki), or just ping @kennytilton on the #clojurians or #fluttercommunity Slacks and we can pair to get you rolling.
 
 ## Quick Start
 
