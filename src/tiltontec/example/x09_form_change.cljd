@@ -1,7 +1,7 @@
 (ns tiltontec.example.x09-form-change
   (:require
     [tiltontec.util.base
-     :refer [trx wtrx dprn dp dpx  prog1 dprn dp dpx *trx?* *trdeep* def-rmap-slots]]
+     :refer [trx wtrx dprn dp dpx  prog1 dprn dp dpx *trx?* *trdeep* def-rmap-props]]
     [tiltontec.cell.base :refer [mx-type unbound *depender*] :as cty]
     [tiltontec.cell.core :as cell
      :refer [cF cFonce cI]]
@@ -27,7 +27,7 @@
               {:onChanged (as-dart-callback [text]
                             (md/mset! me :value text))}
               {:name  :input-a
-               :value (cI nil :watch (fn [slot me newv priorv c]
+               :value (cI nil :watch (fn [prop me newv priorv c]
                                      (dp (str "First text field: " newv))))})
             (fx/text-field {:onChanged (as-dart-callback [text]
                                          (md/mset! me :value text))}
