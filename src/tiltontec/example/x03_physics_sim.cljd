@@ -1,16 +1,17 @@
 (ns tiltontec.example.x03-physics-sim
   (:require
-    [tiltontec.util.base :refer [dprn dp dpx]]
-    [tiltontec.cell.core :as cell :refer [cF cI]]
-    [tiltontec.model.core :refer [make mget  cFkids fmu fmuv] :as md]
-    [tiltontec.flutter-mx.core :as fx]
     ["package:flutter/widgets.dart"
      :refer [Text State StatefulWidget StatelessWidget] :as w]
     ["package:flutter/physics.dart" :as p]
     ["package:flutter/material.dart" :as m
      :refer [MainAxisAlignment MediaQuery Colors Theme Icon AnimationController Icons ThemeData runApp AppBar State]]
     ["package:flutter/painting.dart"
-     :refer [TextStyle Alignment]]))
+     :refer [TextStyle Alignment]]
+    [tiltontec.util.base :refer [dprn dp dpx]]
+
+    [tiltontec.matrix.api :refer [cF cI make mget  cFkids fmu fmuv] :as mx]
+    [tiltontec.flutter-mx.core :as fx]
+    ))
 
 (defn logo-recoil [me ctx ^m/Offset px-per-s]
   (let [size (.-size (MediaQuery/of ctx))
@@ -29,7 +30,7 @@
         simulation (p/SpringSimulation spring 0 1 (- unit-velocity))]
     (doto controller
       .clearListeners
-      (.addListener #(md/mset! me :dragAlignment (.-value animation))) ;; <==== dataflow trigger
+      (.addListener #(mx/mset! me :dragAlignment (.-value animation))) ;; <==== dataflow trigger
       (.animateWith simulation))))
 
 (defn draggable-card [& {:keys [drag-child]}]
@@ -42,7 +43,7 @@
                     (fx/->CBAsIs
                       (fn [^m/DragUpdateDetails details]
                         (let [size (.-size (MediaQuery/of ctx))]
-                          (md/mswap! me :dragAlignment
+                          (mx/mswap! me :dragAlignment
                             #(.+ ^m/Alignment %
                                (m/Alignment
                                  (/ (-> details .-delta .-dx) (/ (.-width size) 2))
@@ -61,7 +62,7 @@
                         (dp :x03-disposing!!! con)
                         (.dispose con)))}
     (fx/align
-      {:alignment (cF (md/mdv! :draggable-card :dragAlignment))}
+      {:alignment (cF (mx/mdv! :draggable-card :dragAlignment))}
       (fx/card drag-child))))
 
 (defn make-app []

@@ -30,8 +30,7 @@
     [tiltontec.faq.navig-cycle :as faq-nav] ;; use make-app-fail or make-app-fixed
     [tiltontec.example.x25-flutter-tex :as tek]
     [tiltontec.example.x26-latex-sandbox :as x26]
-    [tiltontec.demo.simplicity.core :as simplicity]
-    ))
+    [tiltontec.demo.simplicity.core :as simplicity]))
 
 (defn main []
   (.ensureInitialized w/WidgetsFlutterBinding)
@@ -40,7 +39,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (simplicity/make-app)))
+      (x07/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
