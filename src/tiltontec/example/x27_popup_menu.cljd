@@ -50,11 +50,13 @@
                                    .offset (m/Offset 0 3))])}
       (fx/container
         {:padding (.symmetric m/EdgeInsets .vertical 10 .horizontal 15)}
-        (fx/text {:style (p/TextStyle .color m.Colors/black
+        (fx/row
+          (fx/text {:style (p/TextStyle .color m.Colors/black
                            .fontSize 24.0)}
           (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
             (:name lang)
-            "Select Language"))))))
+            "Select Language"))
+          (m/Icon (.-arrow_drop_down m/Icons)))))))
 
 (defn make-app []
   (fx/material-app
