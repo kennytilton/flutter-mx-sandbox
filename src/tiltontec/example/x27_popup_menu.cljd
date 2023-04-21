@@ -18,6 +18,44 @@
                     {:code "ru", :name "Russian", :translation "Привет, мир."}
                     {:code "ar", :name "Arabic", :translation "مرحباً بالعالم."}])
 
+(defn language-selector []
+  (fx/popup-menu-button
+    {:initialValue (cFonce (mget me :lang-code))
+     :onSelected   (as-dart-callback [item]
+                     (mset! me :lang-code item))
+     :itemBuilder  (cF (fx/as-is
+                         (fn ^#/(List m/PopupMenuEntry) [ctx]
+                           (let [^#/(List m/PopupMenuEntry) result
+                                 (mapv (fn [{:keys [code name]}]
+                                         (m/PopupMenuItem
+                                           .value code
+                                           .child (m/Text name)))
+                                   (mget me :languages))]
+                             result))))
+     :offset (m/Offset 0 40)}
+    {:name           :lang-picker
+     :languages      (cI cg4-languages)                     ;; allow for growth, but nit utilized this example
+     :lang-code      (cI "ES") #_(cFn (:code (first (mget me :languages))))
+     :lang-preferred (cF (when-let [code (mget me :lang-code)]
+                           (some #(when (= code (:code %)) %)
+                             (mget me :languages))))}
+    (fx/container
+      {:decoration (m/BoxDecoration .color
+                     (.-white m/Colors)
+                     .borderRadius (.circular m/BorderRadius 5)
+                     .boxShadow [(m/BoxShadow .color
+                                   (-> m/Colors .-grey (.withOpacity 0.5))
+                                   .spreadRadius 2
+                                   .blurRadius 5
+                                   .offset (m/Offset 0 3))])}
+      (fx/container
+        {:padding (.symmetric m/EdgeInsets .vertical 10 .horizontal 15)}
+        (fx/text {:style (p/TextStyle .color m.Colors/black
+                           .fontSize 24.0)}
+          (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
+            (:name lang)
+            "Select Language"))))))
+
 (defn make-app []
   (fx/material-app
     {:title "Flutter/MX Counter Demo"
@@ -27,33 +65,51 @@
                  {:title (m/Text "f/mx Popup")})}
       (fx/center
         (fx/column {:mainAxisAlignment m/MainAxisAlignment.spaceEvenly}
-          (fx/popup-menu-button
-            {:initialValue (cFonce (mget me :lang-code))
-             :onSelected   (as-dart-callback [item]
-                             (mset! me :lang-code item))
-             :itemBuilder  (cF (fx/as-is
-                                 (fn ^#/(List m/PopupMenuEntry) [ctx]
-                                   (let [^#/(List m/PopupMenuEntry) result
-                                         (mapv (fn [{:keys [code name]}]
-                                                 (m/PopupMenuItem
-                                                   .value code
-                                                   .child (m/Text name)))
-                                           (mget me :languages))]
-                                     result))))}
-            {:name           :lang-picker
-             :languages      (cI cg4-languages)             ;; allow for growth, but nit utilized this example
-             :lang-code      (cI "ES") #_(cFn (:code (first (mget me :languages))))
-             :lang-preferred (cF (when-let [code (mget me :lang-code)]
-                                   (some #(when (= code (:code %)) %)
-                                     (mget me :languages))))}
-            (fx/text {:style (p/TextStyle .color m.Colors/red
-                               .fontSize 24.0)}
-              (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
-                (:name lang)
-                "Click to Select Language")))
-
+          (language-selector)
           (fx/text {:style (p/TextStyle .color m.Colors/black
                              .fontSize 36.0)}
             (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
               (:translation lang)
-              "<pick another language>")))))))
+              "<pick ^^^ a language>")))))))
+
+#_(m/PopupMenuButton
+    .itemBuilder
+    (fn [context]
+      [(m/PopupMenuItem
+         .value
+         "option 1"
+         .child
+         (m/Container
+           .padding
+           (.symmetric m/EdgeInsets .vertical 10 .horizontal 15)
+           .child
+           (m/Row .children
+             [(m/Icon (.-info m/Icons) .color (get (.-grey m/Colors) 600))
+              (m/SizedBox .width 10)
+              (m/Text "Option 1" .style (m/TextStyle .fontSize 16))])))
+       ])
+    .child
+    (m/Container .decoration
+      (m/BoxDecoration .color
+        (.-white m/Colors)
+        .borderRadius
+        (.circular m/BorderRadius 5)
+        .boxShadow
+        [(m/BoxShadow .color
+           (-> m/Colors
+             .-grey
+             (.withOpacity 0.5))
+           .spreadRadius
+           2
+           .blurRadius
+           5
+           .offset
+           (m/Offset 0 3))])
+      .child
+      (m/Row .children
+        [(m/Text "Menu" .style (m/TextStyle .fontSize 16))
+         (m/Icon (.-arrow_drop_down m/Icons))]))
+    .offset
+    (m/Offset 0 40)
+    .shape
+    (m/RoundedRectangleBorder .borderRadius (.circular m/BorderRadius 5)))
