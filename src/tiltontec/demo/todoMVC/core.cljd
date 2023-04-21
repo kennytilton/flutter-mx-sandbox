@@ -43,7 +43,7 @@
 ;;; --- credits --------------------------------------------------------
 (defn about-credits []
   (let [faint (p/TextStyle
-                ;; todo does flutter let us place the style higher so referenced just once?
+                ;; todo see if flutter lets us place the style higher so referenced just once
                 .color m.Colors/grey
                 .fontSize 14.0)]
     (fx/padding
@@ -76,9 +76,8 @@
 (defn make-app []
   (let [title "todo"]
     (fx/material-app
-      {:title                      title
-       :theme                      app-theme
-       :debugShowCheckedModeBanner false}
+      {:title title
+       :theme app-theme}
       {:name      :app
        :db        (cF+ [:async? true
                         ; ^^^ the formula computes a value of nil then awaits the future
@@ -88,9 +87,9 @@
                         ; ^^^ we have no dependencies, but if we let the Cell get optimized away
                         ; the async? handling will not have a Cell to work with
                         :watch (fn [_ me new-db _ _]
-                               ;; the reactive :db cell is handy during lifecycle initialization, but
-                               ;; more convenient as a global resource. It's a demo, OK?
-                               (stg/DB! new-db))]
+                                 ;; the reactive :db cell is handy during lifecycle initialization, but
+                                 ;; more convenient as a global resource. It's a demo, OK?
+                                 (stg/DB! new-db))]
                     ;; we make the DB component of the app a reactive property since we receive it as a future
                     (.getInstance prefs/SharedPreferences))
 
