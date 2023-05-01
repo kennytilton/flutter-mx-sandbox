@@ -18,15 +18,6 @@
      :refer [my-todo-list]]
     [tiltontec.demo.todoMVC.todo :refer [td-stg-id td-completed td-title] :as todo]))
 
-(defn todo-delete-x-style []
-  (p/TextStyle
-    .fontFamily "Helvetica Neue"
-    .color (cmm/title-red)
-    .fontWeight m.FontWeight/w200
-    .fontSize 20.0))
-
-;;; --- to-do item sub-widgets -----------------------------
-
 (defn- completion-toggler [todo]
   (fx/check-box
     {:value     (cF (boolean (td-completed todo)))
@@ -35,24 +26,27 @@
      :onChanged (cF (as-dart-callback [value]
                       (mset! todo :completed value)))}))
 
-(defn- delete-button [todo]
-  (fx/visibility!
-    {:visible (cF (or (fx/is-mobile?)
-                    (mget (fmu :item-control) :hovered?)))}
-    (fx/text-button
-      ;; our "delete" icon on each to-do
-      {:onPressed (as-dart-callback []
-                    (mswap! (my-todo-list) :kids
-                      (fn [coll stg-id]
-                        (remove (fn [td]
-                                  (= stg-id (td-stg-id td))) coll))
-                      (todo/td-stg-id todo)))}
-      (fx/text {:style (todo-delete-x-style)}
-        "X"))))
+(defn todo-delete-x-style []
+  (p/TextStyle
+    .fontFamily "Helvetica Neue"
+    .color (cmm/title-red)
+    .fontWeight m.FontWeight/w200
+    .fontSize 20.0))
 
-;;; --- to-do item main display normal ------------------
+(defn- delete-button [todo]
+  (fx/text-button
+    ;; our "delete" icon on each to-do
+    {:onPressed (as-dart-callback []
+                  (mswap! (my-todo-list) :kids
+                    (fn [coll stg-id]
+                      (remove (fn [td]
+                                (= stg-id (td-stg-id td))) coll))
+                    (todo/td-stg-id todo)))}
+    (fx/text {:style (todo-delete-x-style)}
+      "X")))
 
 (defn to-do-display [todo]
+  ;;; --- to-do item main display normal ------------------
   (fx/list-tile
     {:leading  (completion-toggler todo)
      :trailing (delete-button todo)
@@ -69,9 +63,8 @@
     {:name :my-list-tile
      :todo todo}))
 
-;;; --- to-do item editor --------------------------------------
-
 (defn- commit-to-do-editing
+  ;;; --- to-do item editor --------------------------------------
   ([me todo]
    (let [tx-con ^m/TextEditingController (mget me :controller)]
      (commit-to-do-editing me todo (.-text tx-con))))
@@ -149,41 +142,27 @@
                       :done (td-completed todo)))}
     (fx/container
       {:decoration (fx/in-my-context [me context]
-                     ;; list with separator cannot hide separator when item hidden, so
-                     ;; we fake a separator with a top border on the container
                      (m/BoxDecoration .border
-                       (m/Border .top (m/BorderSide .width 0.5
-                                        .color (.-dividerColor (.of m/Theme context))))))}
+                       (m/Border .top
+                         (m/BorderSide .width 0.5
+                           .color (.-dividerColor (.of m/Theme context))))))}
       (fx/gesture-detector
         {:onDoubleTap (as-dart-callback []
                         (when (not (mget me :editing?))
-                          ;; todo fix double-taps and keyrepeat  not seen during editing
                           (mset! me :editing? true)))}
         {:name     :item-control
-         :hovered? (cI false)
          :editing? (cI false)}
-        (fx/mouse-region
-          {:onEnter (as-dart-callback [e]
-                      (mset! (fasc :item-control) :hovered? true))
-           :onHover (as-dart-callback [e]
-                      ;; just in case the mouse starts in the rgn
-                      (mset! (fasc :item-control) :hovered? true))
-           :onExit  (as-dart-callback [e]
-                      (mset! (fasc :item-control) :hovered? false))}
-          (if (mget (fasc :item-control) :editing?)
-            (to-do-editor me todo)
-            (to-do-display todo)))))))
+        (if (mget me :editing?)
+          (to-do-editor me todo)
+          (to-do-display todo))))))
 
 (defn todo-items []
   (fx/expanded
-    ;; ^^^ sizer is required to join column, which demands children know their size
     (fx/list-view+builder
       {:padding     (m.EdgeInsets/all 0.0)
        :itemCount   (cF (count (mkids me)))
        :itemBuilder (cF (fx/as-is
                           (fn [ctx i]
-                            (dpx :td-item-builder i)
-                            ;; we must yield a native Flutter widget ready for Flutter, so we must "render" here,
                             (fx/fx-render ctx
                               (nth (mkids me) i)))))}
       (map todo-list-item
