@@ -67,6 +67,8 @@
             (:name lang)
             "Select language"))))))
 
+(def counter (atom 0))
+
 (defn make-app []
   (fx/material-app
     {:title "Flutter/MX Counter Demo"
@@ -96,6 +98,6 @@
                              .fontSize 36.0)}
             (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
               (if (= :knock-knock (do (mget (fasc :demo) :sound)))
-                (str (rand-int 99999) ": " (:translation lang))
+                (str (swap! counter inc) ": " (:translation lang))
                 "silence")
               "<pick ^^^ a language>")))))))
