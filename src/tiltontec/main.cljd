@@ -12,7 +12,7 @@
     [tiltontec.example.x02-two-counters-ala-matrix :as ctr2]
     [tiltontec.example.x03-physics-sim :as physics]
     [tiltontec.example.x04-drawer :as drawer]
-    [tiltontec.example.x05-fab :as fab]
+    [tiltontec.example.x05-fab :as x05]
     [tiltontec.example.x06-tabs :as tabs]
     [tiltontec.example.x07-animated-container :as x07]
     [tiltontec.example.x08-navigation :as nav]
@@ -42,7 +42,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (x029/make-app)))
+      (x05/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
