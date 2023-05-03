@@ -13,6 +13,6 @@
          ;:sha "268c3aa7cbe3da44a900aa1cc72a2113f30f9a4a" ;; and f/mx too
          ;;:sha "2a858575c2bb5db62d67161fd732df9c2396458a"
          ;;:sha "12a5ef6226eb8b22595754ad00c7ac799c406d14" ;; hover handling
-         :sha "b6e9c06299c66ca3706cf50d44e6474924fe2e23" ;; bottom nav bar
+         :sha "bb7c965868567c388076f7b43143b1a49473435c"
          }
         }}
