@@ -34,16 +34,19 @@
     .fontSize 20.0))
 
 (defn- delete-button [todo]
-  (fx/text-button
-    ;; our "delete" icon on each to-do
-    {:onPressed (as-dart-callback []
-                  (mswap! (my-todo-list) :kids
-                    (fn [coll stg-id]
-                      (remove (fn [td]
-                                (= stg-id (td-stg-id td))) coll))
-                    (todo/td-stg-id todo)))}
-    (fx/text {:style (todo-delete-x-style)}
-      "X")))
+  (fx/visibility!
+    {:visible (cF (or (fx/is-mobile?)
+                    (mget (fmu :item-control) :hovered?)))}
+    (fx/text-button
+      ;; our "delete" icon on each to-do
+      {:onPressed (as-dart-callback []
+                    (mswap! (my-todo-list) :kids
+                      (fn [coll stg-id]
+                        (remove (fn [td]
+                                  (= stg-id (td-stg-id td))) coll))
+                      (todo/td-stg-id todo)))}
+      (fx/text {:style (todo-delete-x-style)}
+        "X"))))
 
 (defn to-do-display [todo]
   ;;; --- to-do item main display normal ------------------
@@ -151,10 +154,43 @@
                         (when (not (mget me :editing?))
                           (mset! me :editing? true)))}
         {:name     :item-control
+         :hovered? (cI false)
          :editing? (cI false)}
-        (if (mget me :editing?)
-          (to-do-editor me todo)
-          (to-do-display todo))))))
+        (letfn [(hover [tf]
+                  (as-dart-callback [e]
+                    (mset! (fmu :item-control) :hovered? tf)))]
+          (fx/mouse-region
+          {:onEnter (hover true)
+           :onHover (hover true)
+           :onExit  (hover false)}
+          (if (mget (fmu :item-control) :editing?)
+            (to-do-editor me todo)
+            (to-do-display todo))))))))
+
+#_ ;; possible terser syntax
+(defn todo-list-item [todo]
+  (div {:name     :item-control
+        :style (box :border :top
+                 :width 0.5
+                 :color (.-dividerColor (.of m/Theme context)))
+
+        :hovered? (cI false)
+        :editing? (cI false)
+        :selected? (cF (case (mx/fmuval :completions :selection)
+                         :all true
+                         :active (not (td-completed todo))
+                         :done (td-completed todo)))
+        :visibility (if (selected?)
+                      :visible :collapsed)
+        :onHover (as-dart-callback [e]
+                   (mset! (fmu :item-control)
+                     :hovered? (some #{(:type e)} [:hoverIn :hoverMove])))
+        :onDoubleTap (as-dart-callback []
+                       (when (not (mget me :editing?))
+                         (mset! me :editing? true)))}
+    (if (mget (fmu :item-control) :editing?)
+      (to-do-editor me todo)
+      (to-do-display todo))))
 
 (defn todo-items []
   (fx/expanded
