@@ -1,6 +1,5 @@
 (ns tiltontec.demo.todoMVC.items
   (:require
-    ["dart:convert" :as convert]
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/material.dart" :as m]
     ["package:flutter/painting.dart" :as p]
@@ -8,11 +7,8 @@
     ["package:http/http.dart" :as dht]
     [clojure.string :as str]
     [tiltontec.cell.base :refer [cinfo minfo] :as cty]
-    [tiltontec.util.base :refer [dprn dp dpx]]
-    [tiltontec.matrix.api :as mx
-     :refer [mget mswap! mset! mset! mkids fm* fmuval fmu fasc
-             cF cI cFonce with-mx-isolation dp dpx]]
-
+    [tiltontec.matrix.api :refer [mget mswap! mset! mset! mkids fm* fmuval fmu fasc
+                                  cF cI cFonce with-mx-isolation dp dpx]]
     [tiltontec.flutter-mx.core :refer [as-dart-callback my-app] :as fx]
     [tiltontec.demo.todoMVC.common :as cmm
      :refer [my-todo-list]]
@@ -26,30 +22,29 @@
      :onChanged (cF (as-dart-callback [value]
                       (mset! todo :completed value)))}))
 
-(defn todo-delete-x-style []
-  (p/TextStyle
-    .fontFamily "Helvetica Neue"
-    .color (cmm/title-red)
-    .fontWeight m.FontWeight/w200
-    .fontSize 20.0))
+(defn todo-delete-callback [todo tag]
+  (as-dart-callback [& [direction]]
+    (todo/ToDoList-delete! (my-todo-list)
+      (todo/td-stg-id todo))))
 
+(comment
+  )
 (defn- delete-button [todo]
   (fx/visibility!
-    {:visible (cF (or (fx/is-mobile?)
+    {:visible (cF (or
+                    (fx/is-mobile?)
                     (mget (fmu :item-control) :hovered?)))}
     (fx/text-button
       ;; our "delete" icon on each to-do
-      {:onPressed (as-dart-callback []
-                    (mswap! (my-todo-list) :kids
-                      (fn [coll stg-id]
-                        (remove (fn [td]
-                                  (= stg-id (td-stg-id td))) coll))
-                      (todo/td-stg-id todo)))}
-      (fx/text {:style (todo-delete-x-style)}
+      {:onPressed (todo-delete-callback todo :item-del-button)}
+      (fx/text {:style (p/TextStyle
+                         .fontFamily "Helvetica Neue"
+                         .color (cmm/title-red)
+                         .fontWeight m.FontWeight/w200
+                         .fontSize 20.0)}
         "X"))))
 
 (defn to-do-display [todo]
-  ;;; --- to-do item main display normal ------------------
   (fx/list-tile
     {:leading  (completion-toggler todo)
      :trailing (delete-button todo)
@@ -58,16 +53,16 @@
                                    (p/TextStyle
                                      .color m.Colors/grey
                                      .decoration p.TextDecoration/lineThrough)
-                                   (p/TextStyle
-                                     .color (if (mget todo :ae-events?)
-                                              m.Colors/red
-                                              m.Colors/blue))))}
-                     (td-title todo)))}
+                                   (p/TextStyle .color
+                                     (if (mget todo :ae-events?)
+                                       m.Colors/red
+                                       m.Colors/blue))))}
+                     (or (td-title todo)
+                       "notitle bug")))}
     {:name :my-list-tile
      :todo todo}))
 
 (defn- commit-to-do-editing
-  ;;; --- to-do item editor --------------------------------------
   ([me todo]
    (let [tx-con ^m/TextEditingController (mget me :controller)]
      (commit-to-do-editing me todo (.-text tx-con))))
@@ -76,11 +71,11 @@
    (let [stg-id (td-stg-id todo)
          trimmed (str/trim value)]
      (cond
-       (str/blank? trimmed) (mx/mswap! (my-todo-list) :kids
+       (str/blank? trimmed) (mswap! (my-todo-list) :kids
                               (partial remove (fn [td] (= stg-id (td-stg-id td)))))
        :else (do
-               (mx/mset! todo :title trimmed)               ;; two dataflow triggers
-               (mx/mset! (mx/fasc :item-control) :editing? false))))))
+               (mset! todo :title trimmed)                  ;; two dataflow triggers
+               (mset! (fasc :item-control) :editing? false))))))
 
 (defn to-do-editor [me todo]
   (assert todo)
@@ -91,12 +86,13 @@
                   (fx/focus-scope
                     ;; focus subtlety: we want the newly created TextField to autofocus, but
                     ;; the to-do input field is already focused, and autofocus does not jump to those
-                    ;; unless in a fresh scope. So ^^^ we throw in a scope.
+                    ;; unless in a fresh scope. So ^^^ we throw in a fresh scope.
                     {:onFocusChange (cF (as-dart-callback [focused?]
-                                          (when (not focused?)
+                                          (dp :focuschange!!! @me title focused? (mget (fmu :item-control) :editing?))
+                                          (when #_ (mget (fmu :item-control) :editing?) (not focused?)
                                             ;; spec says commit on blur...
-                                            (commit-to-do-editing (mx/fm* :todo-editor) todo)
-                                            (mx/mset! (mx/fasc :item-control) :editing? false))))}
+                                            (commit-to-do-editing (fm* :todo-editor) todo)
+                                            (mset! (fasc :item-control) :editing? false))))}
                     {:owner tile}
                     ;; ^^^ this widget is a delegate, not a child, so we record the ListTile as the "owner",
                     ;; and modified navigation to try any owner if "parent" is nil while searching up the Matrix.
@@ -115,7 +111,7 @@
                                                                              (and (dart/is? event srvc/KeyDownEvent)
                                                                                (= "Escape" (.-keyLabel (.-logicalKey event))))
                                                                              (do
-                                                                               (mx/mset! (mx/fasc :item-control) :editing? false)
+                                                                               (mset! (fasc :item-control) :editing? false)
                                                                                m/KeyEventResult.handled)
                                                                              :else m/KeyEventResult.ignored)))))
                                         :decoration  (m/InputDecoration
@@ -126,79 +122,69 @@
                                         :onSubmitted (cF (as-dart-callback [value]
                                                            (commit-to-do-editing me todo value)))
                                         :controller  (cFonce (m/TextEditingController
-                                                               .text (mx/mget me :value)))}
+                                                               .text (mget me :value)))}
                           {:name  :todo-editor
                            :value (cI title)}))))))}
     {:todo  todo
      :owner me}))
 
 (defn todo-list-item [todo]
-  (fx/visibility!
-    {:key               (m/ValueKey. (td-stg-id todo))
-     :visible           (cF (mget me :selected?))
-     :maintainSize      false
-     :maintainAnimation true
-     :maintainState     true}
-    {:selected? (cF (case (mx/fmuval :completions :selection)
-                      :all true
-                      :active (not (td-completed todo))
-                      :done (td-completed todo)))}
-    (fx/container
-      {:decoration (fx/in-my-context [me context]
-                     (m/BoxDecoration .border
-                       (m/Border .top
-                         (m/BorderSide .width 0.5
-                           .color (.-dividerColor (.of m/Theme context))))))}
-      (fx/gesture-detector
-        {:onDoubleTap (as-dart-callback []
-                        (when (not (mget me :editing?))
-                          (mset! me :editing? true)))}
-        {:name     :item-control
-         :hovered? (cI false)
-         :editing? (cI false)}
-        (letfn [(hover [tf]
-                  (as-dart-callback [e]
-                    (mset! (fmu :item-control) :hovered? tf)))]
-          (fx/mouse-region
-          {:onEnter (hover true)
-           :onHover (hover true)
-           :onExit  (hover false)}
-          (if (mget (fmu :item-control) :editing?)
-            (to-do-editor me todo)
-            (to-do-display todo))))))))
+  (fx/dismissible
+    {:key         (m/ValueKey. (td-stg-id todo))
+     :direction   w/DismissDirection.horizontal
+     :onDismissed (todo-delete-callback todo :swipe-dismissed)
+     }
+    (fx/visibility!
+      ;; try with SizedBox.shrink?
+      {:visible           (cF (mget me :selected?))
+       :maintainSize      false
+       :maintainAnimation true
+       :maintainState     true}
+      {:selected? (cF (case (fmuval :completions :selection)
+                        :all true
+                        :active (not (td-completed todo))
+                        :done (td-completed todo)))}
+      (fx/container
+        {:decoration (fx/in-my-context [me context]
+                       ;; list with separator cannot hide separator when item hidden, so
+                       ;; we fake a separator with a top border on the container
+                       (m/BoxDecoration .border
+                         (m/Border .top (m/BorderSide .width 0.5
+                                          .color (.-dividerColor (.of m/Theme context))))))}
+        (fx/gesture-detector
+          {:onDoubleTap (as-dart-callback []
+                          (when (not (mget me :editing?))
+                            ;; todo fix double-taps and keyrepeat  not seen during editing
+                            (mset! me :editing? true)))}
+          {:name     :item-control
+           :hovered? (cI false)
+           :editing? (cI false)}
+          (letfn [(hover-cb [hovered?]
+                    (as-dart-callback [e]
+                      (mset! (fasc :item-control) :hovered? hovered?)))]
+            (fx/mouse-region
+              {:onEnter (hover-cb true)
+               :onHover (hover-cb true)
+               :onExit  (hover-cb false)}
+              (if (mget (fasc :item-control) :editing?)
+                (to-do-editor me todo)
+                (to-do-display todo)))))))))
 
-#_ ;; possible terser syntax
-(defn todo-list-item [todo]
-  (div {:name     :item-control
-        :style (box :border :top
-                 :width 0.5
-                 :color (.-dividerColor (.of m/Theme context)))
-
-        :hovered? (cI false)
-        :editing? (cI false)
-        :selected? (cF (case (mx/fmuval :completions :selection)
-                         :all true
-                         :active (not (td-completed todo))
-                         :done (td-completed todo)))
-        :visibility (if (selected?)
-                      :visible :collapsed)
-        :onHover (as-dart-callback [e]
-                   (mset! (fmu :item-control)
-                     :hovered? (some #{(:type e)} [:hoverIn :hoverMove])))
-        :onDoubleTap (as-dart-callback []
-                       (when (not (mget me :editing?))
-                         (mset! me :editing? true)))}
-    (if (mget (fmu :item-control) :editing?)
-      (to-do-editor me todo)
-      (to-do-display todo))))
+(comment
+  (fx/mouse-region
+    {:onEnter (as-dart-callback [e]
+                (mset! (fasc :item-control) :hovered? hovered?))}
+    ))
 
 (defn todo-items []
   (fx/expanded
+    ;; ^^^ sizer is required to join column, which demands children know their size
     (fx/list-view+builder
       {:padding     (m.EdgeInsets/all 0.0)
        :itemCount   (cF (count (mkids me)))
        :itemBuilder (cF (fx/as-is
                           (fn [ctx i]
+                            ;; we must yield a native Flutter widget ready for Flutter, so we must "render" here,
                             (fx/fx-render ctx
                               (nth (mkids me) i)))))}
       (map todo-list-item

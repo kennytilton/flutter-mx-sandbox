@@ -3,19 +3,17 @@
     ["package:flutter/material.dart" :as m]
     ["package:flutter/painting.dart" :as p]
     ["package:shared_preferences/shared_preferences.dart" :as prefs]
-    [tiltontec.model.core :refer [mget mset! mswap! fasc mkids mpar mkids] :as md]
-    [tiltontec.cell.core :refer [cF cFn cF+ cF_ cI c_F cFonce]]
+    [tiltontec.util.base :refer [dprn dp dpx]]
+    [tiltontec.matrix.api :refer [mget mswap! fasc cF cF+ cI]]
     [tiltontec.flutter-mx.core :refer [in-my-context as-dart-callback] :as fx]
     [tiltontec.demo.todoMVC.common :as cmm]
     [tiltontec.demo.todoMVC.todo :as todo]
     [tiltontec.demo.todoMVC.input :as input]
     [tiltontec.demo.todoMVC.items :as items]
     [tiltontec.demo.todoMVC.footer :as footer]
-    [tiltontec.demo.todoMVC.persist :as stg]
-    [tiltontec.cell.base :refer [cinfo minfo] :as cty]
-    [tiltontec.util.base :refer [dprn dp dpx]]))
+    [tiltontec.demo.todoMVC.persist :as stg]))
 
-;;;;;; --- Components first ------------------------------------------
+;;; --- Components first ------------------------------------------
 
 ;;; --- the app bar -----------------------------------------------
 (defn todo-app-bar [title]
@@ -43,9 +41,14 @@
 ;;; --- credits --------------------------------------------------------
 (defn about-credits []
   (let [faint (p/TextStyle
-                ;; todo see if flutter lets us place the style higher so referenced just once
+                ;; todo does flutter let us place the style higher so referenced just once?
                 .color m.Colors/grey
-                .fontSize 14.0)]
+                .fontSize 14.0)
+        credits ["Double-click a todo to edit."
+                 "Make title blank to delete. Or click the big red X."
+                 "Red indicates meaningless hits on FDA.gov."
+                 "by Kenny Tilton"
+                 "Flutter \u2022 Matrix \u2022 ClojureDart"]]
     (fx/padding
       {:padding (m.EdgeInsets/all 16.0)}
       {:name          :credits-toggle
@@ -53,12 +56,7 @@
       (fx/column
         (when (mget (fasc :credits-toggle) :show-credits?)
           (fx/column
-            (mapv #(fx/text {:style faint} %)
-              ["Double-click a todo to edit."
-               "Make title blank to delete. Or click the big red X."
-               "Red indicates meaningless hits on FDA.gov."
-               "by Kenny Tilton"
-               "Flutter \u2022 Matrix \u2022 ClojureDart"])))
+            (mapv #(fx/text {:style faint} %) credits)))
         (fx/icon-button
           {:onPressed (as-dart-callback []
                         (mswap! (fasc :credits-toggle) :show-credits? not))
@@ -76,29 +74,32 @@
 (defn make-app []
   (let [title "todo"]
     (fx/material-app
-      {:title title
-       :theme app-theme}
+      {:title                      title
+       :theme                      app-theme
+       :debugShowCheckedModeBanner true}
       {:name      :app
        :db        (cF+ [:async? true
                         ; ^^^ the formula computes a value of nil then awaits the future
                         ; and, when received, reactively "computes" the received value as
                         ; a new matrix input.
                         :optimize false
-                        ; ^^^ we have no dependencies, but if we let the Cell get optimized away
-                        ; the async? handling will not have a Cell to work with
+                        ;; ^^^ this rule serves as a constructor, so has no dependencies, but
+                        ; if we allow optimization to proceed normally it will think it can trash this cell
+                        ; but async? cells get a lot more handling, including reactive handling
                         :watch (fn [_ me new-db _ _]
-                                 ;; the reactive :db cell is handy during lifecycle initialization, but
-                                 ;; more convenient as a global resource. It's a demo, OK?
+                                 ;; the reactive :db cell is handy for timing during lifecycle initialization, but
+                                 ;; more convenient as a global resource, so we echo the new-db to a global
                                  (stg/DB! new-db))]
                     ;; we make the DB component of the app a reactive property since we receive it as a future
                     (.getInstance prefs/SharedPreferences))
 
        :todo-list (cF (when-let [db (mget me :db)]
                         ;; ^^^ we cannot use global DB, which is not reactive. It is just a handy global cache.
-                        ;; But we cannot do our work until the db is established, so our rule reads the reactive :db cell.
+                        ;; But we cannot do our work until the db is established, so our rule reads
+                        ;; the reactive :db cell.
                         ;;
                         ;; Next,we make sure cell :db makes it into cache DB, since that
-                        ;; is where all the code looks. Just a sanity check.
+                        ;; is where all the code looks. Just a sanity check. This fires during some hot reloads,
                         (assert (stg/DB) (str "DB not populated but cell :db is: " db))
                         ;; Now we can load any existing todos from storage...
                         (todo/make-ToDoList "todo"
@@ -111,4 +112,3 @@
             (input/todo-controls)
             (items/todo-items)
             (about-credits)))))))
-
