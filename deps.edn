@@ -6,12 +6,13 @@
         org.clojure/data.json {:mvn/version "2.4.0"}
         tensegritics/clojuredart
         {:git/url "https://github.com/tensegritics/ClojureDart.git"
-         :sha "e100a3e66477325cedf172d9c8b6cc2c42ecef92"}
+         :sha "8d5916c0dc87146dc2e8921aaa7fd5dc3c6c3401" ;; Dart 3
+         }
 
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
          ;;:sha "2a858575c2bb5db62d67161fd732df9c2396458a"
          ;;:sha "12a5ef6226eb8b22595754ad00c7ac799c406d14" ;; hover handling
-         :sha "a6cd31d44507bf81c6baf038e344bd0605955154"
+         :sha "e3be9221c7a470449412606af7366c0400c20143"
          }
         }}

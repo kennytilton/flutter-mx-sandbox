@@ -27,8 +27,6 @@
     (todo/ToDoList-delete! (my-todo-list)
       (todo/td-stg-id todo))))
 
-(comment
-  )
 (defn- delete-button [todo]
   (fx/visibility!
     {:visible (cF (or
