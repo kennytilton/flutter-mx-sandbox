@@ -1,7 +1,6 @@
 (ns tiltontec.example.x07-animated-container
   (:require
     ["package:flutter/material.dart" :as m]
-    [tiltontec.cell.base :refer [cinfo minfo] :as cty]
     [tiltontec.cell.core :refer [cF cF+ cI]]
     [tiltontec.model.core :refer [mget] :as md]
     [tiltontec.flutter-mx.core :as fx]))

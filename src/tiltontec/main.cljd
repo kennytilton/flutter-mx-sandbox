@@ -4,7 +4,7 @@
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/foundation.dart" :as foundation]
     [clojure.walk :as walk]
-    [tiltontec.util.base :refer [dprn dp dpx]]
+
     [tiltontec.flutter-mx.core :as fx]
     [tiltontec.example.x00-hello-world :as hello]
     [tiltontec.example.x01-counter :as counter]
@@ -43,7 +43,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (rxjs/make-app)))
+      (todo/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )

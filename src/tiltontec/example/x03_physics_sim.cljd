@@ -7,7 +7,7 @@
      :refer [MainAxisAlignment MediaQuery Colors Theme Icon AnimationController Icons ThemeData runApp AppBar State]]
     ["package:flutter/painting.dart"
      :refer [TextStyle Alignment]]
-    [tiltontec.util.base :refer [dprn dp dpx]]
+    [tiltontec.matrix.base :refer [dprn dp dpx]]
 
     [tiltontec.matrix.api :refer [cF cI make mget  cFkids fmu fmuv] :as mx]
     [tiltontec.flutter-mx.core :as fx]

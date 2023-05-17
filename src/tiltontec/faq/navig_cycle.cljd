@@ -9,8 +9,9 @@
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/material.dart" :as m]
     ["package:flutter/painting.dart" :as p]
-    [tiltontec.util.base :refer [dprn dp dpx]]
-    [tiltontec.cell.base :refer [cinfo minfo] :as cty]))
+    [tiltontec.matrix.base :refer [dprn dp dpx]]
+    [tiltontec.matrix.api :refer [minfo]]
+    [tiltontec.cell.base :refer [cinfo ] :as cty]))
 
 (def the-second-coming
   ;; with apologies to William Butler Yeats, we need a duplicate word sequence to make a point

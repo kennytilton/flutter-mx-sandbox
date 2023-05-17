@@ -1,5 +1,5 @@
 (ns cljd.tiltontec.util.base-test
-  (:require [tiltontec.util.base :as ub
+  (:require [tiltontec.matrix.base :as ub
              :refer [def-rmap-slots rmap-setf]])
   (:use [cljd.test :only [deftest is testing are]]))
 

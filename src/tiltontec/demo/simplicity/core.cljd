@@ -6,8 +6,8 @@
     [tiltontec.model.core :refer [mget mset! mswap! fasc mkids mpar mkids] :as md]
     [tiltontec.cell.core :refer [cF cFn cF+ cF_ cI c_F cFonce]]
     [tiltontec.flutter-mx.core :refer [in-my-context as-dart-callback] :as fx]
-    [tiltontec.cell.base :refer [cinfo minfo] :as cty]
-    [tiltontec.util.base :refer [dprn dp dpx]]))
+    [tiltontec.cell.base :refer [cinfo] :as cty]
+    [tiltontec.matrix.base :refer [dprn dp dpx]]))
 
 ;;;;;; --- Components first ------------------------------------------
 
