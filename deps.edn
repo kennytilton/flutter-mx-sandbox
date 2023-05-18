@@ -13,6 +13,6 @@
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
          ;;:sha "2a858575c2bb5db62d67161fd732df9c2396458a"
          ;;:sha "12a5ef6226eb8b22595754ad00c7ac799c406d14" ;; hover handling
-         :sha "cef75112876a61286bded907cf54a92592febfc8" ;; quiesce
+         :sha "c3b5e6e8d3212c9de5b0a809d5695f4d1abbbf70" ;; quiesce Lite
          }
         }}
