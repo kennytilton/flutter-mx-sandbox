@@ -5,6 +5,7 @@
     ["package:flutter/foundation.dart" :as foundation]
     [clojure.walk :as walk]
 
+    [tiltontec.model.core :as md]
     [tiltontec.flutter-mx.core :as fx]
     [tiltontec.example.x00-hello-world :as hello]
     [tiltontec.example.x01-counter :as counter]
@@ -39,11 +40,12 @@
 (defn main []
   (.ensureInitialized w/WidgetsFlutterBinding)
   ;;(set! r/debugPaintSizeEnabled true)
+  (md/md-quiesce-feature! true)
 
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (physics/make-app)))
+      (todo/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
