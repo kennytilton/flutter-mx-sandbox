@@ -4,7 +4,7 @@
     ["package:flutter/material.dart" :as m]
     [tiltontec.flutter-mx.core :as fx]))
 
-(def second-route
+(defn second-route []
   (fx/scaffold
     {:appBar (fx/app-bar {:title (fx/text "Second Route")})}
     (fx/center
@@ -16,6 +16,13 @@
                           nil)))}
         (m/Text "Go back!")))))
 
+(defn my-ctx-page-push [ctx fx-page-def]
+  (.push (-> ctx m.Navigator/of)
+    (#/(m/MaterialPageRoute Object)
+      .settings (m/RouteSettings .name "/second")
+      .builder (fn [_]
+                 (fx/fx-render ctx fx-page-def)))))
+
 (defn make-app []
   (fx/material-app
     {:title "Navigation Basics"}
@@ -25,5 +32,5 @@
         (fx/elevated-button
           {:onPressed (fx/in-my-context [me ctx]
                         (fx/->CBAsIs
-                          #(fx/ctx-page-push ctx second-route)))}
+                          #(my-ctx-page-push ctx (second-route))))}
           (fx/text "Open route"))))))

@@ -6,6 +6,7 @@
     [clojure.walk :as walk]
 
     [tiltontec.model.core :as md]
+    [tiltontec.matrix.base :refer [dp dpx]]
     [tiltontec.flutter-mx.core :as fx]
     [tiltontec.example.x00-hello-world :as hello]
     [tiltontec.example.x01-counter :as counter]
@@ -16,7 +17,7 @@
     [tiltontec.example.x05-fab :as x05]
     [tiltontec.example.x06-tabs :as tabs]
     [tiltontec.example.x07-animated-container :as x07]
-    [tiltontec.example.x08-navigation :as nav]
+    [tiltontec.example.x08-navigation :as x08]
     [tiltontec.example.x09-form-change :as formchg]
     [tiltontec.example.x09-form-input :as formi]
     [tiltontec.example.x10-datatable :as datatbl]
@@ -28,24 +29,31 @@
     [tiltontec.example.x020-reactive-stream :as rxjs]
     [tiltontec.example.layout-explorer :as layo]
     [tiltontec.demo.todoMVC.core :as todo]
-    [tiltontec.faq.navig-cycle :as faq-nav] ;; use make-app-fail or make-app-fixed
+    [tiltontec.demo.todoHive.core :as todohive]
+    [tiltontec.faq.navig-cycle :as faq-nav] ;; no make-app! use make-app-fail or make-app-fixed
     [tiltontec.example.x25-flutter-tex :as tek]
     [tiltontec.example.x26-latex-sandbox :as x26]
     [tiltontec.example.x27-popup-menu :as x27]
     [tiltontec.example.x028-bottom-navbar :as x028]
     [tiltontec.example.x029_layout_builder :as x029]
     [tiltontec.example.x030_codelab_namer :as x030]
-    [tiltontec.demo.simplicity.core :as simplicity]))
+    [tiltontec.example.fetch-data-list.core :as etienne]
+    [tiltontec.demo.simplicity.core :as simplicity]
+    ["package:hive/hive.dart" :as hive]
+    ["package:hive_flutter/hive_flutter.dart" :as hv]))
 
 (defn main []
   (.ensureInitialized w/WidgetsFlutterBinding)
   ;;(set! r/debugPaintSizeEnabled true)
+
   (md/md-quiesce-feature! true)
+
+  (-> hv/Hive hv/HiveX .initFlutter await)
 
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (todo/make-app)))
+      (todohive/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
