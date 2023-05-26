@@ -48,8 +48,6 @@
 
   (md/md-quiesce-feature! true)
 
-  (-> hv/Hive hv/HiveX .initFlutter await)
-
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.

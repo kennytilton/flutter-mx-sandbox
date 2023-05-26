@@ -11,7 +11,7 @@
     [tiltontec.demo.todoHive.items :as items]
     [tiltontec.demo.todoHive.footer :as footer]
     [tiltontec.demo.todoHive.persist :as stg]
-    ["package:hive/hive.dart" :as hvroot]
+    ;;["package:hive/hive.dart" :as hvroot]
     ["package:hive_flutter/hive_flutter.dart" :as hv]))
 
 ;;; --- Components first ------------------------------------------
@@ -79,15 +79,11 @@
        :theme                      app-theme
        :debugShowCheckedModeBanner true}
       {:name      :app
-       :flutter   (cF (when (-> hv/Hive hv/HiveX .initFlutter await)
-                        true))
        :db        (cF+ [:async? true
                         :watch (fn [_ me hv-box _ _]
                                  (stg/DB! hv-box))]
-                    (when-let [f (mget me :flutter)]
-                      ;; we make the DB component of the app a reactive property since we receive it as a future
-                      (-> hv/Hive (.openBox "todo"))))
-
+                    (-> hv/Hive hv/HiveX .initFlutter await)
+                    (-> hv/Hive (.openBox "todo")))
        :todo-list (cF (when-let [db (mget me :db)]
                         (assert (stg/DB) (str "DB not populated but cell :db is: " db))
                         ;; Now we can load any existing todos from storage...
