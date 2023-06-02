@@ -9,7 +9,7 @@
      :refer [TextStyle Alignment]]
     [tiltontec.matrix.base :refer [dprn dp dpx]]
 
-    [tiltontec.matrix.api :refer [cF cI make mget  cFkids fmu fmuv] :as mx]
+    [tiltontec.matrix.api :refer [cF cI make mget  cFkids fmu fmuv with-mx-isolation] :as mx]
     [tiltontec.flutter-mx.core :as fx]
     ))
 
@@ -43,11 +43,12 @@
                     (fx/->CBAsIs
                       (fn [^m/DragUpdateDetails details]
                         (let [size (.-size (MediaQuery/of ctx))]
-                          (mx/mswap! me :dragAlignment
-                            #(.+ ^m/Alignment %
-                               (m/Alignment
-                                 (/ (-> details .-delta .-dx) (/ (.-width size) 2))
-                                 (/ (-> details .-delta .-dy) (/ (.-height size) 2)))))))))
+                          (with-mx-isolation
+                            (mx/mswap! me :dragAlignment
+                              #(.+ ^m/Alignment %
+                                 (m/Alignment
+                                   (/ (-> details .-delta .-dx) (/ (.-width size) 2))
+                                   (/ (-> details .-delta .-dy) (/ (.-height size) 2))))))))))
      :onPanEnd    (cF (fx/in-my-context [me ctx]
                         (fx/->CBAsIs
                           (fn [^m/DragEndDetails details]

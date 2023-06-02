@@ -99,5 +99,5 @@
             (if-let [lang (mget (fmu :lang-picker) :lang-preferred)]
               (if (= :knock-knock (do (mget (fasc :demo) :sound)))
                 (str (swap! counter inc) ": " (:translation lang))
-                "silence")
-              "<pick ^^^ a language>")))))))
+                "<now click Knock>")
+              "<pick ^^^language>")))))))

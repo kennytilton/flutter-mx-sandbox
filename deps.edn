@@ -14,6 +14,7 @@
          ;;:sha "2a858575c2bb5db62d67161fd732df9c2396458a"
          ;;:sha "12a5ef6226eb8b22595754ad00c7ac799c406d14" ;; hover handling
          ;:sha "9685a8b2e42c796afa6e0490448e3e2f86b9f123" ;; quiesce Lite
-         :sha "aee783c0b39b9f001dbfcc429a5ca928e095f1f0" ;; better future opti
+         ;:sha "aee783c0b39b9f001dbfcc429a5ca928e095f1f0" ;; better future opti
+         :sha "bbdc32481504afe107c62c5b3978364958db6efd" ;; cfn merged
          }
         }}

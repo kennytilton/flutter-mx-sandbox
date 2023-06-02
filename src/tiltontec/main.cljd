@@ -3,6 +3,8 @@
     ["package:flutter/material.dart" :as m]
     ["package:flutter/widgets.dart" :as w]
     ["package:flutter/foundation.dart" :as foundation]
+    ["package:hive/hive.dart" :as hive]
+    ["package:hive_flutter/hive_flutter.dart" :as hv]
     [clojure.walk :as walk]
 
     [tiltontec.model.core :as md]
@@ -38,20 +40,17 @@
     [tiltontec.example.x029_layout_builder :as x029]
     [tiltontec.example.x030_codelab_namer :as x030]
     [tiltontec.example.fetch-data-list.core :as etienne]
-    [tiltontec.demo.simplicity.core :as simplicity]
-    ["package:hive/hive.dart" :as hive]
-    ["package:hive_flutter/hive_flutter.dart" :as hv]))
+    [tiltontec.demo.simplicity.core :as simplicity]))
 
 (defn main []
   (.ensureInitialized w/WidgetsFlutterBinding)
   ;;(set! r/debugPaintSizeEnabled true)
-
   (md/md-quiesce-feature! true)
 
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (todohive/make-app)))
+      (fade/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
