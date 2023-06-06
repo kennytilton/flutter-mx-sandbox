@@ -45,12 +45,12 @@
 (defn main []
   (.ensureInitialized w/WidgetsFlutterBinding)
   ;;(set! r/debugPaintSizeEnabled true)
-  (md/md-quiesce-feature! true)
+  (md/md-quiesce-feature! false)
 
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (fade/make-app)))
+      (physics/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
