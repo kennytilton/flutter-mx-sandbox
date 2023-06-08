@@ -17,6 +17,8 @@
          ;:sha "aee783c0b39b9f001dbfcc429a5ca928e095f1f0" ;; better future opti
          ;; :sha "bbdc32481504afe107c62c5b3978364958db6efd" ;; cfn?
          ;; :sha "fe3a6268ddd1e1dc2173dc16bc9c1cac0ed5a213" ;; stateless GD
-         :sha "5870e116f2f15c0098fdcb3a068aed5ade49ad00" ;; TickerMode GD
+         ;:sha "5870e116f2f15c0098fdcb3a068aed5ade49ad00" ;; TickerMode GD
+         ;;:sha "b57c0f65f24e51082a720ddfbf3dafc3e51a433b" ;; v2 MNB
+         :sha "04e49175eec3a9886578dfce5f3cf32b9c0df3d0" ;; me's quotes
          }
         }}
