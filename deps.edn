@@ -11,14 +11,8 @@
 
         kennytilton/flutter-mx
         {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         ;;:sha "2a858575c2bb5db62d67161fd732df9c2396458a"
-         ;;:sha "12a5ef6226eb8b22595754ad00c7ac799c406d14" ;; hover handling
-         ;:sha "9685a8b2e42c796afa6e0490448e3e2f86b9f123" ;; quiesce Lite
-         ;:sha "aee783c0b39b9f001dbfcc429a5ca928e095f1f0" ;; better future opti
-         ;; :sha "bbdc32481504afe107c62c5b3978364958db6efd" ;; cfn?
-         ;; :sha "fe3a6268ddd1e1dc2173dc16bc9c1cac0ed5a213" ;; stateless GD
-         ;:sha "5870e116f2f15c0098fdcb3a068aed5ade49ad00" ;; TickerMode GD
          ;;:sha "b57c0f65f24e51082a720ddfbf3dafc3e51a433b" ;; v2 MNB
-         :sha "04e49175eec3a9886578dfce5f3cf32b9c0df3d0" ;; me's quotes
+         ;:sha "04e49175eec3a9886578dfce5f3cf32b9c0df3d0" ;; me's quotes
+         :sha "c7cbfedf0a1f0285d87a3f4cef06fc2c1f9db0f3" ;; rev2
          }
         }}

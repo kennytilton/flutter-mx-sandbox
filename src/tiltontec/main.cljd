@@ -28,7 +28,7 @@
     [tiltontec.example.x13-snackbar :as snack]
     [tiltontec.example.x14-hero :as hero]
     [tiltontec.example.x15-fade-widget :as fade]
-    [tiltontec.example.x020-reactive-stream :as rxjs]
+    [tiltontec.example.x020-reactive-stream :as x020]
     [tiltontec.example.layout-explorer :as layo]
     [tiltontec.demo.todoMVC.core :as todo]
     [tiltontec.demo.todoHive.core :as todohive]
@@ -39,7 +39,8 @@
     [tiltontec.example.x028-bottom-navbar :as x028]
     [tiltontec.example.x029_layout_builder :as x029]
     [tiltontec.example.x030_codelab_namer :as x030]
-    [tiltontec.example.fetch-data-list.core :as etienne]
+    [tiltontec.example.x035-timer-poll :as x035]
+    [tiltontec.example.x040-named-routes :as x040]
     [tiltontec.demo.simplicity.core :as simplicity]))
 
 (defn main []
@@ -50,7 +51,7 @@
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (x27/make-app)))
+      (x040/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
