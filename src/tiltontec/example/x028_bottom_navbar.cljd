@@ -31,7 +31,7 @@
       {:appBar              (app-bar
                               {:title (m/Text "Bottom Navigation Bar Demo")})
        :bottomNavigationBar (fx/bottom-navigation-bar
-                              {;; :type m.BottomNavigationBarType/fixed ;; or shifting
+                              {;; :type m.BottomNavigationBarType/fixed or .../shifting
                                ;; ^^^ we can specify fixed or shifting to override defaults, which
                                ;; are fixed for items <= 3, shifting above 3. Very strange.
                                :currentIndex      (cF (let [scaff (fmu :top-scaff)

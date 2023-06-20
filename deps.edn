@@ -4,15 +4,15 @@
  :aliases {:cljd {:main-opts ["-m" "cljd.build"]}}
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         org.clojure/data.json {:mvn/version "2.4.0"}
+
         tensegritics/clojuredart
-        {:git/url "https://github.com/tensegritics/ClojureDart.git"
-         :sha "37d5898c563460dec511e2de4d4f76d5fbe49e1e" ;; Dart 3
-         }
+         {:git/url "https://github.com/tensegritics/ClojureDart.git"
+          :sha "9f546d5c7c0bc1d52729fb192e2a44f3326a014f"}
 
         kennytilton/flutter-mx
-        {:git/url "https://github.com/kennytilton/flutter-mx.git"
-         ;;:sha "b57c0f65f24e51082a720ddfbf3dafc3e51a433b" ;; v2 MNB
-         ;:sha "04e49175eec3a9886578dfce5f3cf32b9c0df3d0" ;; me's quotes
-         :sha "c7cbfedf0a1f0285d87a3f4cef06fc2c1f9db0f3" ;; rev2
+        {:local/root "../flutter-mx"}
+
+        #_ {:git/url "https://github.com/kennytilton/flutter-mx.git"
+         :sha "70beb9fe46a659ac218d9faca73fe9ac78c07440" ;; double-eval fix
          }
         }}

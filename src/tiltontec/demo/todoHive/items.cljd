@@ -154,7 +154,6 @@
         (fx/gesture-detector
           {:onDoubleTap (as-dart-callback []
                           (when (not (mget me :editing?))
-                            ;; todo fix double-taps and keyrepeat  not seen during editing
                             (mset! me :editing? true)))}
           {:name     :item-control
            :hovered? (cI false)
@@ -170,6 +169,8 @@
               (if (mget (fasc :item-control) :editing?)
                 (to-do-editor me todo)
                 (to-do-display todo)))))))))
+
+
 
 (defn todo-items []
   (fx/expanded
