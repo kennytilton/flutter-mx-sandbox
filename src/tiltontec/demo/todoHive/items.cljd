@@ -133,7 +133,8 @@
     {:key         (m/ValueKey. (td-stg-id todo))
      :direction   w/DismissDirection.horizontal
      :onDismissed (todo-delete-callback todo :swipe-dismissed)}
-    {:name :todo-LI}
+    {:name :todo-LI
+     :fx$quiesce :never}
     (fx/visibility!
       ;; try with SizedBox.shrink?
       {:visible           (cF (mget me :selected?))

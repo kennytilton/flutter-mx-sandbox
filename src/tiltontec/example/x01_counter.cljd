@@ -1,6 +1,6 @@
 (ns tiltontec.example.x01-counter
   (:require
-    [tiltontec.matrix.api :refer [cF cI mget  mswap! fm*] :as md]
+    [tiltontec.matrix.api :refer [cF cI mget mswap! fm*] :as md]
     [tiltontec.flutter-mx.core :as fx
      :refer [scaffold app-bar text center column hero material-app sized-box]]
     ["package:flutter/widgets.dart" :as w]
@@ -24,7 +24,7 @@
         (column
           {:mainAxisAlignment m.MainAxisAlignment/center}
           (text {:style (p/TextStyle .color m.Colors/black
-                             .fontSize 18.0)}
+                          .fontSize 18.0)}
             "You clicked the button this many times:")
           (sized-box {:height 14.0})
           (text

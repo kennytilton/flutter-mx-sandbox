@@ -11,9 +11,9 @@
                            .fontWeight m.FontWeight/bold
                            .color m.Colors/blue)
        :showBottomBorder true
-       :columns          (mapv (fn [col]
+       :columns          (map (fn [col]
                                  (m/DataColumn .label (m/Text col))) cols)
-       :rows             (mapv (fn [row]
+       :rows             (map (fn [row]
                                  (m/DataRow .cells (mapv (fn [cell] (m/DataCell (m/Text cell)))
                                                      row))) rows)})))
 

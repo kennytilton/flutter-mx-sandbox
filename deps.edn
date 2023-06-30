@@ -7,12 +7,15 @@
 
         tensegritics/clojuredart
          {:git/url "https://github.com/tensegritics/ClojureDart.git"
-          :sha "e8426f184c4635977384acd0721ae11e826960b9" #_"9f546d5c7c0bc1d52729fb192e2a44f3326a014f"}
+          ;; :sha "ae1b485e84ccc35b122f776dfc7cc62198274701" #_"e8426f184c4635977384acd0721ae11e826960b9" #_"9f546d5c7c0bc1d52729fb192e2a44f3326a014f"
+          ;:sha "8ccde14432497e4b83604812e1a2cd17153d6fb8"
+          :sha "596862eb7cf5914f218630242a708df7cd892acd" ;; CLJD.set
+          }
 
         kennytilton/flutter-mx
-        {:local/root "../flutter-mx"}
+        #_ {:local/root "../flutter-mx"}
 
-        #_ {:git/url "https://github.com/kennytilton/flutter-mx.git"
+        {:git/url "https://github.com/kennytilton/flutter-mx.git"
          :sha "70beb9fe46a659ac218d9faca73fe9ac78c07440" ;; double-eval fix
          }
         }}

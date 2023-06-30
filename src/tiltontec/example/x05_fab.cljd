@@ -5,7 +5,7 @@
     [tiltontec.cell.base :as cbase]
     [tiltontec.model.peek :refer [Model minfo mref?]]
     [tiltontec.matrix.base :refer [trx dpx dp]]
-    [tiltontec.matrix.api :refer [cF cI mget fmuv] :as mx]
+    [tiltontec.matrix.api :refer [cF cF+ cI mget fmuv] :as mx]
     [tiltontec.flutter-mx.core :refer [as-dart-callback] :as fx]
     [tiltontec.flutter-mx.factory :as fmk]
     ["package:flutter/widgets.dart" :as w]
@@ -50,13 +50,14 @@
                                .parent c)))
      ; --- behavior -------------------------
      :step             (/ 90.0 (dec (count actions)))
-     :open?            (cI initial-open?
-                         ;; reactive "observers" are how changed values become app behavior
-                         :watch (fn [prop-name me new-value prior-value cell]
-                                  (when-let [c (fx/my-controller)] ;; not until first render installation
-                                    (if new-value
-                                      (.forward c)
-                                      (.reverse c)))))}
+     :open?            (cI initial-open?)
+     :ani-dir          (cF+ [:watch (fn [prop-name me new-value prior-value cell]
+                                      (when-let [c (fx/my-controller)]
+                                        (case new-value
+                                          :forward (.forward c)
+                                          :reverse (.reverse c))))]
+                         (if (mget me :open?)
+                           :forward :reverse))}
 
     (when-let [anime (mget me :expand-animation)]
       (fx/stack
@@ -68,7 +69,7 @@
         (doall (map-indexed
                  (fn [i action]
                    (expanding-action-button me anime
-                     :direction-degrees (* i 30.0 #_(fmuv :fab :step)) ;;; HHACK
+                     :direction-degrees (* i #_ 30.0 (fmuv :fab :step))
                      :max-distance distance
                      :progress-key :expand-animation
                      :action action))
