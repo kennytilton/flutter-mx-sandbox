@@ -5,7 +5,7 @@
     [tiltontec.cell.base :as cbase]
     [tiltontec.model.peek :refer [Model minfo mref?]]
     [tiltontec.matrix.base :refer [trx dpx dp]]
-    [tiltontec.matrix.api :refer [cF cF+ cI mget fmuv] :as mx]
+    [tiltontec.matrix.api :refer [cF cF+ cI mget fmuv fasc] :as mx]
     [tiltontec.flutter-mx.core :refer [as-dart-callback] :as fx]
     [tiltontec.flutter-mx.factory :as fmk]
     ["package:flutter/widgets.dart" :as w]
@@ -59,22 +59,22 @@
                          (if (mget me :open?)
                            :forward :reverse))}
 
-    (when-let [anime (mget me :expand-animation)]
-      (fx/stack
-        {:alignment    m.Alignment/bottomRight
-         :clipBehavior m.Clip/none}
-        {:name :fab-stack}
-        (tap-to-close-fab me)
-        ;; Matrix always flattens children, and discards nils, so we can offer a collection mid-children
-        (doall (map-indexed
-                 (fn [i action]
-                   (expanding-action-button me anime
-                     :direction-degrees (* i #_ 30.0 (fmuv :fab :step))
-                     :max-distance distance
-                     :progress-key :expand-animation
-                     :action action))
-                 actions))
-        (tap-to-open-fab me)))))
+    (fx/stack
+      {:alignment    m.Alignment/bottomRight
+       :clipBehavior m.Clip/none}
+      {:name :fab-stack}
+      (tap-to-close-fab me)
+      ;; Matrix always flattens children, and discards nils, so we can offer a collection mid-children
+      (when-let [ani (mget (fasc :fab) :expand-animation)]
+        (map-indexed
+          (fn [i action]
+            (expanding-action-button me ani
+              :direction-degrees (* i #_ 30.0 (fmuv :fab :step))
+              :max-distance distance
+              :progress-key :expand-animation
+              :action action))
+          actions))
+      (tap-to-open-fab me))))
 
 (defn expanding-action-button [me anime & {:keys [action direction-degrees max-distance progress-key]}]
   (fx/animated-builder
@@ -179,12 +179,3 @@
     .decoration (m/BoxDecoration
                   .borderRadius (m.BorderRadius/all (m.Radius/circular 8.0))
                   .color (.-shade300 m.Colors/cyan))))
-
-#_;; this below is the above converted to "apply". The Dart equivalent works, but not this
-        (dart:core.Function/apply m/Container nil
-          ^#/(Map Symbol dynamic) {:margin (m.EdgeInsets/symmetric :vertical 8.0 :horizontal 24.0)
-                                   :height (if is-big? 128.0 36.0)
-                                   :decoration
-                                   (m/BoxDecoration
-                                     :borderRadius (m.BorderRadius/all (m.Radius/circular 8.0))
-                                     :color (.-shade300 Colors/pink))})

@@ -65,7 +65,7 @@
             {:name :banner}
             (str "Message " (or (mget (fmu :msg-recipient) :msg-ct) "not") " received:"))
 
-          (fx/text!
+          (fx/text
             {:style (fx/in-my-context [me ctx]
                       (.-headline3 (.-textTheme (m.Theme/of ctx))))}
             {:name       :msg-recipient
@@ -156,7 +156,7 @@
                              .fontSize 36.0)}
             {:name :banner}
             (str "Message " (or (mget (fasc :msg-recipient) :msg-ct) "not") " received:"))
-          (fx/text!
+          (fx/text
             {:style (fx/in-my-context [me ctx]
                       (.-headline3 (.-textTheme (m.Theme/of ctx))))}
             (mget (fasc :msg-recipient) :msg-rcvd)))))))

@@ -13,9 +13,9 @@
           }
 
         kennytilton/flutter-mx
-        #_ {:local/root "../flutter-mx"}
+        {:local/root "../flutter-mx"}
 
-        {:git/url "https://github.com/kennytilton/flutter-mx.git"
+        #_ {:git/url "https://github.com/kennytilton/flutter-mx.git"
          :sha "70beb9fe46a659ac218d9faca73fe9ac78c07440" ;; double-eval fix
          }
         }}

@@ -47,12 +47,10 @@
   (.ensureInitialized w/WidgetsFlutterBinding)
   ;;(set! r/debugPaintSizeEnabled true)
   (md/md-quiesce-feature! true)
-
   (fx/run-app
     (fx/fx-render nil
       ;; Change the namespace below and rebuild to see a different example.
-      (do ;; fx/fx-factory-yield
-        (x27/make-app))))
+      (todohive/make-app)))
 
   ;; ??? (w/debugDumpApp)
   )
