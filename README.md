@@ -1,4 +1,6 @@
-# Flutter/MX Sandbox
+# DEPRECATED Flutter/MX Sandbox
+
+This repo is scheduled for deletion RSN. All examples have been copied to an independent source root "examples" in [Flutter/MX](https://github.com/kennytilton/flutter-mx).
 
 Examples of Flutter/MX, including ports of `samples` from the ClojureDart repo.
 
