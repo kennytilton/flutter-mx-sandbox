@@ -1,0 +1,57 @@
+(ns tilton.main
+  (:require
+    ["package:flutter/material.dart" :as m]
+    ["package:flutter/widgets.dart" :as w]
+    ["package:flutter/foundation.dart" :as foundation]
+    ["package:hive/hive.dart" :as hive]
+    ["package:hive_flutter/hive_flutter.dart" :as hv]
+    [clojure.walk :as walk]
+
+    [tilton.mx.model.core :as md]
+    [tilton.mx.base :refer [dp dpx]]
+    [tilton.fmx.api :as fx]
+    [tilton.example.x00-hello-world :as hello]
+    [tilton.example.x01-counter :as counter]
+    [tilton.example.x02-two-counters-ala-flux :as ctr2flux]
+    [tilton.example.x02-two-counters-ala-matrix :as ctr2]
+    [tilton.example.x03-physics-sim :as x03]
+    [tilton.example.x04-drawer :as x04]
+    [tilton.example.x05-fab :as x05]
+    [tilton.example.x06-tabs :as tabs]
+    [tilton.example.x07-animated-container :as x07]
+    [tilton.example.x08-navigation :as x08]
+    [tilton.example.x09-form-change :as formchg]
+    [tilton.example.x09-form-input :as formi]
+    [tilton.example.x10-datatable :as x10]
+    [tilton.example.x11-grid-list :as grid]
+    [tilton.example.x12-gesture-detector :as affine]
+    [tilton.example.x13-snackbar :as snack]
+    [tilton.example.x14-hero :as hero]
+    [tilton.example.x15-fade-widget :as fade]
+    [tilton.example.x020-reactive-stream :as x020]
+    [tilton.example.layout-explorer :as layo]
+    [tilton.demo.todoMVC.core :as todo]
+    [tilton.demo.todoHive.core :as todohive]
+    [tilton.faq.navig-cycle :as faq-nav] ;; no make-app! use make-app-fail or make-app-fixed
+    [tilton.example.x25-flutter-tex :as tek]
+    [tilton.example.x26-latex-sandbox :as x26]
+    [tilton.example.x27-popup-menu :as x27]
+    [tilton.example.x028-bottom-navbar :as x028]
+    [tilton.example.x029_layout_builder :as x029]
+    [tilton.example.x030_codelab_namer :as x030]
+    [tilton.example.x035-timer-poll :as x035]
+    [tilton.example.x040-named-routes :as x040]
+    [tilton.example.tts :as tts]
+    [tilton.demo.simplicity.core :as simplicity]))
+
+(defn main []
+  (.ensureInitialized w/WidgetsFlutterBinding)
+  ;;(set! r/debugPaintSizeEnabled true)
+  (md/md-quiesce-feature! true)
+  (fx/run-app
+    (fx/fx-render nil
+      ;; Change the namespace below and rebuild to see a different example.
+      (tts/make-app)))
+
+  ;; ??? (w/debugDumpApp)
+  )

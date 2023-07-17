@@ -1,0 +1,34 @@
+(ns tilton.demo.simplicity.core
+  (:require
+    ["package:flutter/material.dart" :as m]
+    ["package:flutter/painting.dart" :as p]
+
+    [tilton.mx.model.core :refer [mget mset! mswap! fasc mkids mpar mkids] :as md]
+    [tilton.mx.cell.core :refer [cF cFn cF+ cF_ cI c_F cFonce]]
+    [tilton.fmx.api :refer [in-my-context as-dart-callback] :as fx]
+    [tilton.mx.cell.base :refer [cinfo] :as cty]
+    [tilton.mx.base :refer [dprn dp dpx]]))
+
+;;;;;; --- Components first ------------------------------------------
+
+(def app-theme (m/ThemeData
+                 .fontFamily "Helvetica Neue"
+                 .backgroundColor (.fromRGBO m/Color 245 245 245 1)))
+
+;;;;;; --- the app --------------------------------------------------------
+
+(defn make-app []
+  (let [title "simplicity"]
+    (fx/material-app
+      {:title                      title
+       :theme                      app-theme
+       :debugShowCheckedModeBanner true}
+      {:name      :app}
+      (fx/scaffold
+        {:appBar (fx/app-bar
+                   {:title (m/Text "Simplicity")})}
+        (fx/ink {:color m.Colors/white}
+          (fx/column
+            (fx/text "quote 1")
+            (fx/text "quote 2")))))))
+

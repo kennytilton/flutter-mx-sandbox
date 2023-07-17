@@ -1,0 +1,191 @@
+(ns tilton.example.tts
+  (:require
+    [clojure.walk :refer [keywordize-keys]]
+    [clojure.string :as str]
+    [tilton.mx.api :refer [dp dpx cF cI mget mswap! fm*] :as md]
+    [tilton.fmx.api :as fx
+     :refer [scaffold app-bar text center column hero material-app sized-box]]
+    ["package:flutter/widgets.dart" :as w]
+    ["package:flutter/material.dart" :as m]
+    ["package:flutter/painting.dart" :as p]
+    ["package:text_to_speech/text_to_speech.dart" :as ttsp]
+    ["package:flutter_tts/flutter_tts.dart" :as fts]))
+
+(defn fts-test []
+  (let [fts (fts/FlutterTts)]
+    (dp :tts!! fts)
+    (.setSharedInstance fts true)
+    (.awaitSpeakCompletion fts true)
+    (let [langs (.-getLanguages fts)]
+      (dp :langs-f!! langs)
+      (.then ^Future langs
+        (fn [v]
+          (dp :langs!!! v)
+          #_(doseq [l (take 5 v)]
+              (.setLanguage fts l)
+              (dp :lang-now l)
+              (let [fs (.speak fts "Hello, world.")]
+                (.then ^Future fs
+                  (fn [x] (dp :tat-was l))))))))
+    (.setLanguage fts "en-US")
+    (.setSpeechRate fts 0.5)
+    (.setPitch fts 1.0)
+
+    ;; await flutterTts.synthesizeToFile("Hello World", Platform.isAndroid ? "tts.wav" : "tts.caf");
+    #_(let [f (.synthesizeToFile fts "Hello big wide world." "tts.caf")]
+        (.then ^Future f
+          (fn [v] (dp :synthtofile f))))
+
+    #_(let [f (.getVoices fts)]
+        (.then ^Future f
+          (fn [vs] (dp :getVoices vs)
+            (dp :total-voices (count vs))
+            (doseq [v (take 5 (drop 60 vs))]
+              ;;(dp :voice v (into {} v))
+              (let [{:keys [name locale]} (keywordize-keys (into {} v))
+                    f (.setVoice fts {"name" name "locale" locale})
+                    sent (str "To be or not to be." name)]
+                (when (not (some #{name} ["Good News"]))
+                  (dp [name locale])
+                  (.speak fts sent)))))))
+
+    (let [vs [["Rishi" "en-IN"]
+              ["Xander" "nl-NL"]
+              ["Daniel" "en-GB"]]
+          script ["four score and seven years ago today"
+                  "our forefathers brought forth on this continent"]]
+      (do                                                   ;; dotimes [n 20]
+        (let [vi (rand-int (count vs))
+              v (get vs 0)
+              si (rand-int (count script))
+              sent (get script si)]
+          ;;(dp :voice v (into {} v))
+          (let [[name locale] v
+                f (.setVoice fts {"name" name "locale" locale})
+                #_#_sent (str "To be or not to be.")]
+            (when (not (some #{name} ["Good News"]))
+              (dp [name locale])
+              (.speak fts sent))))))
+    #_(doseq [v vs]
+        ;;(dp :voice v (into {} v))
+        (let [[name locale] v
+              f (.setVoice fts {"name" name "locale" locale})
+              #_#_sent (str "To be or not to be.")]
+          (when (not (some #{name} ["Good News"]))
+            (dp [name locale])
+            (.speak fts sent))))
+
+    ; *** ["Daniel" "en-GB"]
+    ; *** ["Rishi" "en-IN"]
+    ; *** ["Xander" "nl-NL"]
+    ; ["Thomas" "fr-FR"]
+    ; ["Fred" "en-US"]
+    ; ["Junior" "en-US"]
+    ; ["Ralph" "en-US"]
+
+    ; ["Kathy" "en-US"]
+    ; *** ["Tessa" "en-ZA"]
+    ; *** ["Samantha" "en-US"]
+    ; ["Superstar" "en-US"]
+    ; ["Carmit" "he-IL"]
+    ; ["Lekha" "hi-IN"]
+    ; ["Luciana" "pt-BR"]
+    ;  ["Tingting" "zh-CN"]
+    ;flutter: :DPR> ["Sinji" "zh-HK"]
+    ;flutter: :DPR> ["Meijia" "zh-TW"]
+    ;["Nora" "nb-NO"]
+    ;flutter: :DPR> ["Ellen" "nl-BE"]
+    ;flutter: :DPR> ["Zosia" "pl-PL"]
+    ; ["Milena" "ru-RU"]
+    ; ["Yuna" "ko-KR"]
+
+    ; -------------------------------------------------
+
+    ;flutter: :DPR> ["Melina" "el-GR"]
+    ;flutter: :DPR> ["Karen" "en-AU"]
+    ;flutter: :DPR> ["Moira" "en-IE"]
+    ; ["Anna" "de-DE"]
+    ;  ["Whisper" "en-US"]
+    ; ["Superstar" "en-US"]
+    ; ["Junior" "en-US"]
+    ; ["Fred" "en-US"]
+    ;flutter: :DPR> ["Tessa" "en-ZA"]
+    ;flutter: :DPR> ["Mónica" "es-ES"]
+    ;flutter: :DPR> ["Paulina" "es-MX"]
+    ; ["Amélie" "fr-CA"]
+    ;flutter: :DPR> ["Thomas" "fr-FR"]
+    ;flutter: :DPR> ["Carmit" "he-IL"]
+    ;flutter: :DPR> ["Lekha" "hi-IN"]
+    ; ["Damayanti" "id-ID"]
+    ;flutter: :DPR> ["Alice" "it-IT"]
+    ;flutter: :DPR> ["Kyoko" "ja-JP"]
+    ;flutter: :DPR> ["Yuna" "ko-KR"]
+    ; ["Ellen" "nl-BE"]
+
+    ; ["Zuzana" "cs-CZ"]
+
+    ;; await flutterTts.setVoice({"name": "Karen", "locale": "en-AU"});
+    #_#_(let [f (.setVoice fts {"name" "Tessa" "locale" "en"})]
+          (.then ^Future f
+            (fn [v] (dp :defvo f))))
+
+            (.speak fts "To be or not to be.")
+
+    #_(let [f (.-getDefaultVoice fts)]
+        (dp :f!!! f)
+        (.then ^Future f
+          (fn [v] (dp :defvo f))))
+    #_(let [engs (.-getEngines fts)]
+        (dp :engs engs)
+        (.then ^Future engs
+          (fn [v] (dp :engs v))))))
+
+#_(let [tts (ttsp/TextToSpeech.)
+        speak (.-speak tts)
+        langs (.-getLanguages tts)
+        vbylang (.-getVoiceByLang tts)
+        voices (.-getVoices tts)]
+    ((.-setRate tts) 1.1)
+    ((.-setVolume tts) 0.7)
+    ((.-setPitch tts) 1.0)
+    ((.-setLanguage tts) "en-GB")
+    (dp :langs langs)
+    (.then ^Future (vbylang "en-US")
+      (fn [v] (dp :vbyl-us v)))
+    (dp :langs (langs))
+    (.then ^Future (langs)
+      (fn [val] (dp :langs val)))
+    (speak "Hello, world."))
+
+(defn make-app []
+
+  (material-app
+    {:title "Flutter/MX Counter Demo"
+     :theme (m/ThemeData .primarySwatch m.Colors/blue)}
+    (scaffold
+      {:appBar (app-bar
+                 {:title (m/Text "Welcome to Flutter/MX World")})
+       :floatingActionButton
+       (cF (fx/floating-action-button
+             {:onPressed (fx/as-dart-callback []
+                           (fts-test)
+                           (mswap! (fm* :z-counter) :value inc))
+              :tooltip   "Increment"}
+             (m/Icon m.Icons/add .color m.Colors/black)))}
+      (center
+        (column
+          {:mainAxisAlignment m.MainAxisAlignment/center}
+          (text {:style (p/TextStyle .color m.Colors/black
+                          .fontSize 18.0)}
+            "You clicked the button this many times:")
+          (sized-box {:height 14.0})
+          (text
+            {:style (fx/in-my-context [me ctx]
+                      (.-headline4 (.-textTheme (m.Theme/of ctx))))}
+            {:name  :z-counter
+             :value (cI 0)}
+            (str (md/my-value))))))))
+
+
+
+
